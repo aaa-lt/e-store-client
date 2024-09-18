@@ -1,47 +1,83 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import Header from './components/Header.vue'
+import CardList from './components/CardList.vue'
+import Drawer from './components/Drawer.vue'
+
+const products = [
+  {
+    id: 1,
+    name: 'Earthen Bottle',
+    href: '#',
+    price: '$48',
+    imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-01.jpg',
+    imageAlt: 'Tall slender porcelain bottle with natural clay textured body and cork stopper.'
+  },
+  {
+    id: 2,
+    name: 'Nomad Tumbler',
+    href: '#',
+    price: '$35',
+    imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-02.jpg',
+    imageAlt: 'Olive drab green insulated bottle with flared screw lid and flat top.'
+  },
+  {
+    id: 3,
+    name: 'Focus Paper Refill',
+    href: '#',
+    price: '$89',
+    imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-03.jpg',
+    imageAlt: 'Person using a pen to cross a task off a productivity paper card.'
+  },
+  {
+    id: 4,
+    name: 'Machined Mechanical Pencil',
+    href: '#',
+    price: '$35',
+    imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg',
+    imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.'
+  },
+  {
+    id: 1,
+    name: 'Earthen Bottle',
+    href: '#',
+    price: '$48',
+    imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-01.jpg',
+    imageAlt: 'Tall slender porcelain bottle with natural clay textured body and cork stopper.'
+  },
+  {
+    id: 2,
+    name: 'Nomad Tumbler',
+    href: '#',
+    price: '$35',
+    imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-02.jpg',
+    imageAlt: 'Olive drab green insulated bottle with flared screw lid and flat top.'
+  },
+  {
+    id: 3,
+    name: 'Focus Paper Refill',
+    href: '#',
+    price: '$89',
+    imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-03.jpg',
+    imageAlt: 'Person using a pen to cross a task off a productivity paper card.'
+  },
+  {
+    id: 4,
+    name: 'Machined Mechanical Pencil',
+    href: '#',
+    price: '$35',
+    imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg',
+    imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.'
+  }
+]
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <Header />
+  <Drawer :products="products" />
+  <div class="bg-white">
+    <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+      <h2 class="sr-only">Products</h2>
+      <CardList :products="products" />
     </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  </div>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
