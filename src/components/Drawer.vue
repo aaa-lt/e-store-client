@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
+import CartItem from './CartItem.vue'
 
 defineProps({
   products: Array
@@ -60,49 +61,7 @@ const open = ref(true)
                       <div class="flow-root">
                         <ul role="list" class="-my-6 divide-y divide-gray-200">
                           <li v-for="product in products" :key="product.id" class="flex py-6">
-                            <div
-                              class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
-                            >
-                              <img
-                                :src="product.imageSrc"
-                                :alt="product.imageAlt"
-                                class="h-full w-full object-cover object-center"
-                              />
-                            </div>
-
-                            <div class="ml-4 flex flex-1 flex-col">
-                              <div>
-                                <div
-                                  class="flex justify-between text-base font-medium text-gray-900"
-                                >
-                                  <h3>
-                                    <a :href="product.href">{{ product.name }}</a>
-                                  </h3>
-                                  <p class="ml-4">{{ product.price }}</p>
-                                </div>
-                                <p class="mt-1 text-sm text-gray-500">{{ product.color }}</p>
-                              </div>
-                              <div class="flex flex-1 items-end justify-between text-sm">
-                                <p class="text-gray-500">
-                                  <input
-                                    type="number"
-                                    name="quantity"
-                                    id="quantity"
-                                    class="p-1.5"
-                                    :value="product.quantity"
-                                  />
-                                </p>
-
-                                <div class="flex">
-                                  <button
-                                    type="button"
-                                    class="font-medium text-indigo-600 hover:text-indigo-500"
-                                  >
-                                    Remove
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
+                            <CartItem :product="product" />
                           </li>
                         </ul>
                       </div>
@@ -118,11 +77,12 @@ const open = ref(true)
                       Shipping and taxes calculated at checkout.
                     </p>
                     <div class="mt-6">
-                      <a
+                      <button
                         href="#"
-                        class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                        >Checkout</a
+                        class="flex items-center justify-center w-full rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white cursor-pointer shadow-sm hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed"
                       >
+                        Checkout
+                      </button>
                     </div>
                     <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
                       <p>

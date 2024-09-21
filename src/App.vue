@@ -2,6 +2,14 @@
 import Header from './components/Header.vue'
 import CardList from './components/CardList.vue'
 import Drawer from './components/Drawer.vue'
+import Pagination from './components/Pagination.vue'
+import FilterHeader from './components/FilterHeader.vue'
+import { onMounted } from 'vue'
+import axios from 'axios'
+
+onMounted(() => {
+  axios.get('').then((res) => res.data)
+})
 
 const products = [
   {
@@ -74,10 +82,14 @@ const products = [
 <template>
   <Header />
   <Drawer :products="products" />
-  <div class="bg-white">
+  <FilterHeader>
+    <CardList :products="products" />
+  </FilterHeader>
+  <Pagination />
+  <!-- <div class="bg-white">
     <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-      <h2 class="sr-only">Products</h2>
-      <CardList :products="products" />
+      <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-6">Shop</h2>
+      
     </div>
-  </div>
+  </div> -->
 </template>
