@@ -1,4 +1,5 @@
-<script setup>
+<!-- eslint-disable vue/multi-word-component-names -->
+<script setup lang="ts">
 import { ref } from 'vue'
 import {
   Dialog,
@@ -10,14 +11,14 @@ import {
 } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { StarIcon } from '@heroicons/vue/20/solid'
-import CardModal from './CardModal.vue'
+// import CardModal from './CardModal.vue'
 
 defineProps({
   productHref: String,
   imageSrc: String,
   imageAlt: String,
   productName: String,
-  productPrice: Number
+  productPrice: String
 })
 
 const product = {

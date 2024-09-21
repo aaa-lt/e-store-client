@@ -6,12 +6,13 @@ module.exports = {
   extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
+    '@vue/eslint-config-typescript',
     '@vue/eslint-config-prettier/skip-formatting'
   ],
   parserOptions: {
     ecmaVersion: 'latest'
+  },
+  rules: {
+    '@vue/component-name-in-template-casing': 'off'
   }
-  // rules: {
-  //   'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-  // }
 }

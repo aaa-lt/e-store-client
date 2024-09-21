@@ -1,11 +1,17 @@
-<script setup>
+<!-- eslint-disable vue/multi-word-component-names -->
+<script setup lang="ts">
 import { ref } from 'vue'
+import type { PropType } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import CartItem from './CartItem.vue'
+import type { Product } from '@/types/Product'
 
-defineProps({
-  products: Array
+const props = defineProps({
+  products: {
+    required: true,
+    type: Array as PropType<Product[]>
+  }
 })
 
 const open = ref(true)
@@ -60,7 +66,7 @@ const open = ref(true)
                     <div class="mt-8">
                       <div class="flow-root">
                         <ul role="list" class="-my-6 divide-y divide-gray-200">
-                          <li v-for="product in products" :key="product.id" class="flex py-6">
+                          <li v-for="product in props.products" :key="product.id" class="flex py-6">
                             <CartItem :product="product" />
                           </li>
                         </ul>

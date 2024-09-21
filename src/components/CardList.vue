@@ -1,8 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import Card from './Card.vue'
+import type { PropType } from 'vue'
+import type { Product } from '@/types/Product'
 
-defineProps({
-  products: Array
+const props = defineProps({
+  products: {
+    required: true,
+    type: Array as PropType<Product[]>
+  }
 })
 </script>
 <template>
@@ -10,7 +15,7 @@ defineProps({
     class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
   >
     <Card
-      v-for="product in products"
+      v-for="product in props.products"
       :key="product.id"
       :productHref="product.href"
       :imageSrc="product.imageSrc"
