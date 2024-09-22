@@ -67,7 +67,12 @@ const open = ref(true)
                       <div class="flow-root">
                         <ul role="list" class="-my-6 divide-y divide-gray-200">
                           <li v-for="product in props.products" :key="product.id" class="flex py-6">
-                            <CartItem :product="product" />
+                            <CartItem
+                              :productName="product.name"
+                              :productDescription="product.description"
+                              :productPrice="product.price"
+                              :productQuantity="product.quantity"
+                            />
                           </li>
                         </ul>
                       </div>

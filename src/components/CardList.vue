@@ -17,11 +17,12 @@ const props = defineProps({
     <Card
       v-for="product in props.products"
       :key="product.id"
-      :productHref="product.href"
-      :imageSrc="product.imageSrc"
-      :imageAlt="product.imageAlt"
       :productName="product.name"
+      :productDescription="product.description"
       :productPrice="product.price"
+      :productQuantity="product.quantity"
+      :CategoryName="product.Category.name"
+      :SupplierName="product.Supplier.name"
     />
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { inject, ref, reactive } from 'vue'
 import {
   Dialog,
   DialogPanel,
@@ -15,58 +15,33 @@ import {
 } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon } from '@heroicons/vue/20/solid'
+import { type SortOption, type Filters } from '@/types/Search'
 
-const sortOptions = [
-  { name: 'Most Popular', href: '#', current: true },
-  { name: 'Best Rating', href: '#', current: false },
-  { name: 'Newest', href: '#', current: false },
-  { name: 'Price: Low to High', href: '#', current: false },
-  { name: 'Price: High to Low', href: '#', current: false }
-]
-const subCategories = [
-  { name: 'Totes', href: '#' },
-  { name: 'Backpacks', href: '#' },
-  { name: 'Travel Bags', href: '#' },
-  { name: 'Hip Bags', href: '#' },
-  { name: 'Laptop Sleeves', href: '#' }
-]
-const filters = [
-  {
-    id: 'color',
-    name: 'Color',
-    options: [
-      { value: 'white', label: 'White', checked: false },
-      { value: 'beige', label: 'Beige', checked: false },
-      { value: 'blue', label: 'Blue', checked: true },
-      { value: 'brown', label: 'Brown', checked: false },
-      { value: 'green', label: 'Green', checked: false },
-      { value: 'purple', label: 'Purple', checked: false }
-    ]
-  },
-  {
-    id: 'category',
-    name: 'Category',
-    options: [
-      { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-      { value: 'sale', label: 'Sale', checked: false },
-      { value: 'travel', label: 'Travel', checked: true },
-      { value: 'organization', label: 'Organization', checked: false },
-      { value: 'accessories', label: 'Accessories', checked: false }
-    ]
-  },
-  {
-    id: 'size',
-    name: 'Size',
-    options: [
-      { value: '2l', label: '2L', checked: false },
-      { value: '6l', label: '6L', checked: false },
-      { value: '12l', label: '12L', checked: false },
-      { value: '18l', label: '18L', checked: false },
-      { value: '20l', label: '20L', checked: false },
-      { value: '40l', label: '40L', checked: true }
-    ]
-  }
-]
+const filters = inject<Filters>(
+  'filters',
+  reactive({
+    sortBy: '',
+    searchQuery: ''
+  })
+)
+
+const sortOptions = ref<SortOption[]>([
+  { name: 'Default', value: '', current: true },
+  { name: 'Newest', value: 'creation_date', current: false },
+  { name: 'Price: Low to High', value: 'price', current: false },
+  { name: 'Price: High to Low', value: '-price', current: false }
+])
+
+const onChageSort = (selectedOption: SortOption) => {
+  sortOptions.value.forEach((option) => {
+    option.current = option.name === selectedOption.name
+  })
+  filters.sortBy = selectedOption.value
+}
+
+const onChangeSearchInput = (event: Event) => {
+  filters.searchQuery = (event.target as HTMLInputElement)?.value
+}
 
 const mobileFiltersOpen = ref(false)
 </script>
@@ -115,7 +90,7 @@ const mobileFiltersOpen = ref(false)
                 </div>
 
                 <!-- Filters -->
-                <form class="mt-4 border-t border-gray-200">
+                <!-- <form class="mt-4 border-t border-gray-200">
                   <h3 class="sr-only">Categories</h3>
                   <ul role="list" class="px-2 py-3 font-medium text-gray-900">
                     <li v-for="category in subCategories" :key="category.name">
@@ -165,7 +140,7 @@ const mobileFiltersOpen = ref(false)
                       </div>
                     </DisclosurePanel>
                   </Disclosure>
-                </form>
+                </form> -->
               </DialogPanel>
             </TransitionChild>
           </div>
@@ -204,14 +179,15 @@ const mobileFiltersOpen = ref(false)
                   <div class="py-1">
                     <MenuItem v-for="option in sortOptions" :key="option.name" v-slot="{ active }">
                       <a
-                        :href="option.href"
+                        @click="onChageSort(option)"
                         :class="[
                           option.current ? 'font-medium text-gray-900' : 'text-gray-500',
                           active ? 'bg-gray-100' : '',
                           'block px-4 py-2 text-sm'
                         ]"
-                        >{{ option.name }}</a
                       >
+                        {{ option.name }}
+                      </a>
                     </MenuItem>
                   </div>
                 </MenuItems>
@@ -243,16 +219,10 @@ const mobileFiltersOpen = ref(false)
                 <input
                   type="search"
                   id="default-search"
-                  class="block w-full px-24 p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                  class="block w-full pl-10 p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Search Mockups, Logos..."
-                  required
+                  @input="onChangeSearchInput"
                 />
-                <button
-                  type="submit"
-                  class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
-                >
-                  Search
-                </button>
               </div>
             </div>
 
@@ -272,7 +242,7 @@ const mobileFiltersOpen = ref(false)
 
           <div class="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
             <!-- Filters -->
-            <form class="hidden lg:block">
+            <!-- <form class="hidden lg:block">
               <h3 class="sr-only">Categories</h3>
               <ul
                 role="list"
@@ -325,7 +295,7 @@ const mobileFiltersOpen = ref(false)
                   </div>
                 </DisclosurePanel>
               </Disclosure>
-            </form>
+            </form> -->
 
             <!-- Product grid -->
             <div class="lg:col-span-3">
