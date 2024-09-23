@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { inject } from 'vue'
 import type { Filters } from '@/types/Search'
+import { inject } from 'vue'
 
 const filters = inject('filters') as Filters
-const onChangeInput = inject('onChangeInput') as (
-  key: keyof typeof filters
-) => (event: Event) => void
+
+const onChangeInput = (key: keyof typeof filters) => (event: Event) => {
+  const target = event.target as HTMLInputElement
+
+  if (key === 'minPrice' || key === 'maxPrice') {
+    filters[key] = parseInt(target.value)
+  } else {
+    filters[key] = target.value
+  }
+}
 
 const onChangeDateInput = onChangeInput('creationDate')
 const onChangeCategoryNameInput = onChangeInput('categoryName')
@@ -68,9 +75,9 @@ const onChangeMaxPriceInput = onChangeInput('maxPrice')
     <div class="flex pt-4">
       <input
         class="ring-1 ring-inset ring-gray-300 focus:bg-slate-50 px-3 py-2 -ml-px rounded-md w-full outline-none text-sm"
-        type="supplier_name"
+        type="text"
         name="supplier_name"
-        id=""
+        id="=supplier_name"
         placeholder="Supplier"
         @input="onChangeSupplierNameInput"
         autocomplete="off"

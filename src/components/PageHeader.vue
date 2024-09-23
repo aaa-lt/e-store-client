@@ -5,6 +5,8 @@ import { Dialog, DialogPanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 const mobileMenuOpen = ref(false)
+
+const emit = defineEmits(['open-drawer'])
 </script>
 
 <template>
@@ -42,6 +44,12 @@ const mobileMenuOpen = ref(false)
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
         <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
           >Log in <span aria-hidden="true">&rarr;</span></a
+        >
+        <a
+          href="#"
+          class="text-sm font-semibold leading-6 text-gray-900 ml-4"
+          @click="() => emit('open-drawer')"
+          >Cart</a
         >
       </div>
     </nav>

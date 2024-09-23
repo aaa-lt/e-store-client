@@ -11,14 +11,18 @@ const props = defineProps({
   products: {
     required: true,
     type: Array as PropType<Product[]>
+  },
+  open: {
+    required: true,
+    type: Boolean
   }
 })
 
-const open = ref(true)
+const emit = defineEmits(['close-drawer'])
 </script>
 <template>
   <TransitionRoot as="template" :show="open">
-    <Dialog class="relative z-10" @close="open = false">
+    <Dialog class="relative z-10" @close="() => emit('close-drawer')">
       <TransitionChild
         as="template"
         enter="ease-in-out duration-500"
@@ -54,7 +58,7 @@ const open = ref(true)
                         <button
                           type="button"
                           class="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
-                          @click="open = false"
+                          @click="() => emit('close-drawer')"
                         >
                           <span class="absolute -inset-0.5" />
                           <span class="sr-only">Close panel</span>
@@ -101,7 +105,7 @@ const open = ref(true)
                         <button
                           type="button"
                           class="font-medium text-indigo-600 hover:text-indigo-500"
-                          @click="open = false"
+                          @click="() => emit('close-drawer')"
                         >
                           Continue Shopping
                           <span aria-hidden="true"> &rarr;</span>

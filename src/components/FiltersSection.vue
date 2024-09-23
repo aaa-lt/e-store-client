@@ -1,36 +1,12 @@
 <script setup lang="ts">
-import { inject, ref, reactive, provide } from 'vue'
+import { ref } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import { type SortOption, type Filters } from '@/types/Search'
 import FiltersHeader from './FiltersHeader.vue'
 import FiltersSubSection from './FiltersSubSection.vue'
 
-const filters = inject<Filters>('filters', reactive({}))
-
-const sortOptions = ref<SortOption[]>([
-  { name: 'Default', value: '', current: true },
-  { name: 'Newest', value: 'creation_date', current: false },
-  { name: 'Price: Low to High', value: 'price', current: false },
-  { name: 'Price: High to Low', value: '-price', current: false }
-])
-
-const onChangeInput = (key: keyof typeof filters) => (event: Event) => {
-  const target = event.target as HTMLInputElement
-
-  if (key === 'minPrice' || key === 'maxPrice') {
-    filters[key] = parseInt(target.value)
-  } else {
-    filters[key] = target.value
-  }
-}
-
 const mobileFiltersOpen = ref(false)
-
-provide('filters', filters)
-provide('sortOptions', sortOptions)
-provide('onChangeInput', onChangeInput)
-provide('mobileFiltersOpen', mobileFiltersOpen)
+const mobileFiltersToggle = (isOpen: boolean) => (mobileFiltersOpen.value = isOpen)
 </script>
 
 <template>
@@ -38,7 +14,7 @@ provide('mobileFiltersOpen', mobileFiltersOpen)
     <div>
       <!-- Mobile filter dialog -->
       <TransitionRoot as="template" :show="mobileFiltersOpen">
-        <Dialog class="relative z-40 lg:hidden" @close="mobileFiltersOpen = false">
+        <Dialog class="relative z-40 lg:hidden" @close="mobileFiltersToggle(false)">
           <TransitionChild
             as="template"
             enter="transition-opacity ease-linear duration-300"
@@ -69,7 +45,7 @@ provide('mobileFiltersOpen', mobileFiltersOpen)
                   <button
                     type="button"
                     class="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
-                    @click="mobileFiltersOpen = false"
+                    @click="mobileFiltersToggle(false)"
                   >
                     <span class="sr-only">Close menu</span>
                     <XMarkIcon class="h-6 w-6" aria-hidden="true" />
@@ -88,7 +64,7 @@ provide('mobileFiltersOpen', mobileFiltersOpen)
 
       <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <section aria-labelledby="products-heading" class="pt-6">
-          <FiltersHeader />
+          <FiltersHeader @mobile-filters-toggle="mobileFiltersToggle" />
           <h2 id="products-heading" class="sr-only">Products</h2>
 
           <div class="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">

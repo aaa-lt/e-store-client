@@ -1,25 +1,30 @@
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronDownIcon, FunnelIcon } from '@heroicons/vue/20/solid'
-import { inject, type Ref } from 'vue'
+import { inject, ref } from 'vue'
 import type { Filters, SortOption } from '@/types/Search'
 
+defineEmits(['mobileFiltersToggle'])
+
 const filters = inject('filters') as Filters
-const sortOptions = inject('sortOptions') as SortOption[]
-const onChangeInput = inject('onChangeInput') as (
-  key: keyof typeof filters
-) => (event: Event) => void
+const sortOptions = ref<SortOption[]>([
+  { name: 'Default', value: '', current: true },
+  { name: 'Newest', value: 'creation_date', current: false },
+  { name: 'Price: Low to High', value: 'price', current: false },
+  { name: 'Price: High to Low', value: '-price', current: false }
+])
 
 const onChageSort = (selectedOption: SortOption) => {
-  sortOptions.forEach((option) => {
+  sortOptions.value.forEach((option) => {
     option.current = option.name === selectedOption.name
   })
   filters.sortBy = selectedOption.value
 }
 
-const mobileFiltersOpen = inject('mobileFiltersOpen') as Ref<boolean>
-
-const onChangeSearchInput = onChangeInput('searchQuery')
+const onChangeSearchInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  filters.searchQuery = target.value
+}
 </script>
 <template>
   <div class="flex items-baseline justify-between border-b border-gray-200 py-6">
@@ -104,7 +109,11 @@ const onChangeSearchInput = onChangeInput('searchQuery')
       <button
         type="button"
         class="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
-        @click="mobileFiltersOpen = true"
+        @click="
+          () => {
+            $emit('mobileFiltersToggle', true)
+          }
+        "
       >
         <span class="sr-only">Filters</span>
         <FunnelIcon class="h-5 w-5" aria-hidden="true" />

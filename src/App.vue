@@ -10,7 +10,14 @@ import type { Filters } from './types/Search'
 
 const products = ref<Product[]>([])
 const filters = reactive<Filters>({})
-provide('filters', filters)
+const drawerOpen = ref(false)
+
+const openDrawer = () => {
+  drawerOpen.value = true
+}
+const closeDrawer = () => {
+  drawerOpen.value = false
+}
 
 const fetchItems = async () => {
   try {
@@ -33,10 +40,12 @@ const fetchItems = async () => {
 
 onMounted(fetchItems)
 watch(filters, fetchItems)
+
+provide('filters', filters)
 </script>
 <template>
-  <PageHeader />
-  <!-- <Drawer :products="products" /> -->
+  <PageHeader @open-drawer="openDrawer" />
+  <Drawer :open="drawerOpen" :products="products" @close-drawer="closeDrawer" />
   <FiltersSection>
     <CardList :products="products" />
   </FiltersSection>
