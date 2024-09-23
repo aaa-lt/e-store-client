@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div
-    class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
+    class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 mt-4 sm:px-6"
   >
     <div class="flex flex-1 justify-between sm:hidden">
       <a
@@ -93,28 +93,4 @@
 
 <script setup lang="ts">
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
-
-const items = [
-  {
-    id: 1,
-    title: 'Back End Developer',
-    department: 'Engineering',
-    type: 'Full-time',
-    location: 'Remote'
-  },
-  {
-    id: 2,
-    title: 'Front End Developer',
-    department: 'Engineering',
-    type: 'Full-time',
-    location: 'Remote'
-  },
-  {
-    id: 3,
-    title: 'User Interface Designer',
-    department: 'Design',
-    type: 'Full-time',
-    location: 'Remote'
-  }
-]
 </script>

@@ -1,26 +1,27 @@
 <script setup lang="ts">
-import HeaderComponent from './components/HeaderComponent.vue'
+import PageHeader from './components/PageHeader.vue'
 import CardList from './components/CardList.vue'
 import Drawer from './components/Drawer.vue'
-import Pagination from './components/Pagination.vue'
-import FilterHeader from './components/FilterHeader.vue'
+import FiltersSection from './components/FiltersSection.vue'
 import { onMounted, provide, reactive, ref, watch } from 'vue'
 import axios from 'axios'
 import type { Product } from './types/Product'
 import type { Filters } from './types/Search'
 
 const products = ref<Product[]>([])
-const filters = reactive({
-  sortBy: '',
-  searchQuery: ''
-})
+const filters = reactive<Filters>({})
 provide('filters', filters)
 
 const fetchItems = async () => {
   try {
     const params: Filters = {
       ...(filters.sortBy && { sortBy: filters.sortBy }),
-      ...(filters.searchQuery && { name: filters.searchQuery })
+      ...(filters.searchQuery && { name: filters.searchQuery }),
+      ...(filters.categoryName && { categoryName: filters.categoryName }),
+      ...(filters.supplierName && { supplierName: filters.supplierName }),
+      ...(filters.minPrice && { minPrice: filters.minPrice }),
+      ...(filters.maxPrice && { maxPrice: filters.maxPrice }),
+      ...(filters.creationDate && { creationDate: filters.creationDate })
     }
 
     const { data } = await axios.get('http://localhost:3000/products', { params })
@@ -34,17 +35,9 @@ onMounted(fetchItems)
 watch(filters, fetchItems)
 </script>
 <template>
-  <HeaderComponent />
+  <PageHeader />
   <!-- <Drawer :products="products" /> -->
-  <FilterHeader>
+  <FiltersSection>
     <CardList :products="products" />
-  </FilterHeader>
-  <Pagination />
-
-  <!-- <div class="bg-white">
-    <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-      <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-6">Shop</h2>
-      
-    </div>
-  </div> -->
+  </FiltersSection>
 </template>
