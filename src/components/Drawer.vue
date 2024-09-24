@@ -1,28 +1,28 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import { ref } from 'vue'
 import type { PropType } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import CartItem from './CartItem.vue'
 import type { Product } from '@/types/Product'
 
-const props = defineProps({
-  products: {
+defineProps({
+  items: {
     required: true,
     type: Array as PropType<Product[]>
   },
   open: {
     required: true,
     type: Boolean
-  }
+  },
+  totalPrice: Number
 })
 
-const emit = defineEmits(['close-drawer'])
+const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder'])
 </script>
 <template>
   <TransitionRoot as="template" :show="open">
-    <Dialog class="relative z-10" @close="() => emit('close-drawer')">
+    <Dialog class="relative z-10" @close="() => emit('closeDrawer')">
       <TransitionChild
         as="template"
         enter="ease-in-out duration-500"
@@ -58,7 +58,7 @@ const emit = defineEmits(['close-drawer'])
                         <button
                           type="button"
                           class="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
-                          @click="() => emit('close-drawer')"
+                          @click="() => emit('closeDrawer')"
                         >
                           <span class="absolute -inset-0.5" />
                           <span class="sr-only">Close panel</span>
@@ -69,13 +69,14 @@ const emit = defineEmits(['close-drawer'])
 
                     <div class="mt-8">
                       <div class="flow-root">
-                        <ul role="list" class="-my-6 divide-y divide-gray-200">
-                          <li v-for="product in props.products" :key="product.id" class="flex py-6">
+                        <ul v-auto-animate role="list" class="-my-6 divide-y divide-gray-200">
+                          <li v-for="item in items" :key="item.id" class="flex py-6">
                             <CartItem
-                              :productName="product.name"
-                              :productDescription="product.description"
-                              :productPrice="product.price"
-                              :productQuantity="product.quantity"
+                              :product-name="item.name"
+                              :product-description="item.description"
+                              :product-price="item.price"
+                              :product-quantity="item.quantity"
+                              :remove-from-cart="() => emit('removeFromCart', item)"
                             />
                           </li>
                         </ul>
@@ -86,14 +87,14 @@ const emit = defineEmits(['close-drawer'])
                   <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
                     <div class="flex justify-between text-base font-medium text-gray-900">
                       <p>Subtotal</p>
-                      <p>$262.00</p>
+                      <p>${{ totalPrice }}</p>
                     </div>
                     <p class="mt-0.5 text-sm text-gray-500">
                       Shipping and taxes calculated at checkout.
                     </p>
                     <div class="mt-6">
                       <button
-                        href="#"
+                        @click="() => emit('createOrder')"
                         class="flex items-center justify-center w-full rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white cursor-pointer shadow-sm hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed"
                       >
                         Checkout
@@ -105,7 +106,7 @@ const emit = defineEmits(['close-drawer'])
                         <button
                           type="button"
                           class="font-medium text-indigo-600 hover:text-indigo-500"
-                          @click="() => emit('close-drawer')"
+                          @click="() => emit('closeDrawer')"
                         >
                           Continue Shopping
                           <span aria-hidden="true"> &rarr;</span>

@@ -6,6 +6,10 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 const mobileMenuOpen = ref(false)
 
+defineProps({
+  totalPrice: Number
+})
+
 const emit = defineEmits(['open-drawer'])
 </script>
 
@@ -49,7 +53,7 @@ const emit = defineEmits(['open-drawer'])
           href="#"
           class="text-sm font-semibold leading-6 text-gray-900 ml-4"
           @click="() => emit('open-drawer')"
-          >Cart</a
+          >Cart <span class="text-xs text-gray-700">(${{ totalPrice }})</span></a
         >
       </div>
     </nav>

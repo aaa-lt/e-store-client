@@ -12,4 +12,13 @@ export interface Filters {
   minPrice?: number
   maxPrice?: number
   creationDate?: string
+  page: number
+}
+
+export interface PaginationMeta {
+  total_items: number
+  total_pages: number
+  current_page: number
+  per_page: number
+  remaining_items: number
 }

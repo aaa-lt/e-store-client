@@ -1,50 +1,19 @@
-<script setup>
-import { ref } from 'vue'
-import {
-  Dialog,
-  DialogPanel,
-  RadioGroup,
-  RadioGroupOption,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
+<script setup lang="ts">
+import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import { StarIcon } from '@heroicons/vue/20/solid'
 
-defineProps({})
-
-const product = {
-  name: 'Basic Tee 6-Pack ',
-  price: '$192',
-  rating: 3.9,
-  reviewCount: 117,
-  href: '#',
-  imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-quick-preview-02-detail.jpg',
-  imageAlt: 'Two each of gray, white, and black shirts arranged on table.',
-  colors: [
-    { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
-    { name: 'Gray', class: 'bg-gray-200', selectedClass: 'ring-gray-400' },
-    { name: 'Black', class: 'bg-gray-900', selectedClass: 'ring-gray-900' }
-  ],
-  sizes: [
-    { name: 'XXS', inStock: true },
-    { name: 'XS', inStock: true },
-    { name: 'S', inStock: true },
-    { name: 'M', inStock: true },
-    { name: 'L', inStock: true },
-    { name: 'XL', inStock: true },
-    { name: 'XXL', inStock: true },
-    { name: 'XXXL', inStock: false }
-  ]
-}
-
-const open = ref(false)
-const selectedColor = ref(product.colors[0])
-const selectedSize = ref(product.sizes[2])
+defineProps({
+  open: Boolean,
+  product: {
+    type: Object,
+    required: true
+  }
+})
+const emit = defineEmits(['close-modal', 'onClickAdd'])
 </script>
 <template>
   <TransitionRoot as="template" :show="open">
-    <Dialog class="relative z-10" @close="open = false">
+    <Dialog class="relative z-10" @close="() => emit('close-modal')">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"
@@ -79,16 +48,15 @@ const selectedSize = ref(product.sizes[2])
                 <button
                   type="button"
                   class="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
-                  @click="open = false"
+                  @click="() => emit('close-modal')"
                 >
                   <span class="sr-only">Close</span>
                   <XMarkIcon class="h-6 w-6" aria-hidden="true" />
                 </button>
 
-                <div
-                  class="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8"
-                >
-                  <div
+                <div class="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 lg:gap-x-8">
+                  <!-- sm:grid-cols-12 -->
+                  <!-- <div
                     class="aspect-h-3 aspect-w-2 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-5"
                   >
                     <img
@@ -96,151 +64,36 @@ const selectedSize = ref(product.sizes[2])
                       :alt="product.imageAlt"
                       class="object-cover object-center"
                     />
-                  </div>
-                  <div class="sm:col-span-8 lg:col-span-7">
+                  </div> -->
+                  <div class="sm:col-span-8 lg:col-span-7 w-full">
                     <h2 class="text-2xl font-bold text-gray-900 sm:pr-12">{{ product.name }}</h2>
 
                     <section aria-labelledby="information-heading" class="mt-2">
                       <h3 id="information-heading" class="sr-only">Product information</h3>
 
-                      <p class="text-2xl text-gray-900">{{ product.price }}</p>
+                      <p class="text-md text-gray-900 mb-4 border-b border-gray-200 pb-4">
+                        {{ product.description }}
+                      </p>
+                      <p class="text-gray-900">
+                        <span class="text-sm">Price: </span
+                        ><span class="text-xl text-black">${{ product.price }}</span>
+                      </p>
 
-                      <!-- Reviews -->
-                      <div class="mt-6">
-                        <h4 class="sr-only">Reviews</h4>
-                        <div class="flex items-center">
-                          <div class="flex items-center">
-                            <StarIcon
-                              v-for="rating in [0, 1, 2, 3, 4]"
-                              :key="rating"
-                              :class="[
-                                product.rating > rating ? 'text-gray-900' : 'text-gray-200',
-                                'h-5 w-5 flex-shrink-0'
-                              ]"
-                              aria-hidden="true"
-                            />
-                          </div>
-                          <p class="sr-only">{{ product.rating }} out of 5 stars</p>
-                          <a
-                            href="#"
-                            class="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                            >{{ product.reviewCount }} reviews</a
-                          >
-                        </div>
-                      </div>
-                    </section>
+                      <p class="text-gray-900 pt-2">
+                        <span v-if="product.quantity > 0" class="text-xl text-green-700"
+                          >In stock
+                        </span>
+                        <span v-else class="text-xl text-red-500">Out of stock </span>
+                        <span class="text-sm">({{ product.quantity }} left)</span>
+                      </p>
 
-                    <section aria-labelledby="options-heading" class="mt-10">
-                      <h3 id="options-heading" class="sr-only">Product options</h3>
-
-                      <form>
-                        <!-- Colors -->
-                        <fieldset aria-label="Choose a color">
-                          <legend class="text-sm font-medium text-gray-900">Color</legend>
-
-                          <RadioGroup
-                            v-model="selectedColor"
-                            class="mt-4 flex items-center space-x-3"
-                          >
-                            <RadioGroupOption
-                              as="template"
-                              v-for="color in product.colors"
-                              :key="color.name"
-                              :value="color"
-                              :aria-label="color.name"
-                              v-slot="{ active, checked }"
-                            >
-                              <div
-                                :class="[
-                                  color.selectedClass,
-                                  active && checked ? 'ring ring-offset-1' : '',
-                                  !active && checked ? 'ring-2' : '',
-                                  'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none'
-                                ]"
-                              >
-                                <span
-                                  aria-hidden="true"
-                                  :class="[
-                                    color.class,
-                                    'h-8 w-8 rounded-full border border-black border-opacity-10'
-                                  ]"
-                                />
-                              </div>
-                            </RadioGroupOption>
-                          </RadioGroup>
-                        </fieldset>
-
-                        <!-- Sizes -->
-                        <fieldset class="mt-10" aria-label="Choose a size">
-                          <div class="flex items-center justify-between">
-                            <div class="text-sm font-medium text-gray-900">Size</div>
-                            <a
-                              href="#"
-                              class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                              >Size guide</a
-                            >
-                          </div>
-
-                          <RadioGroup v-model="selectedSize" class="mt-4 grid grid-cols-4 gap-4">
-                            <RadioGroupOption
-                              as="template"
-                              v-for="size in product.sizes"
-                              :key="size.name"
-                              :value="size"
-                              :disabled="!size.inStock"
-                              v-slot="{ active, checked }"
-                            >
-                              <div
-                                :class="[
-                                  size.inStock
-                                    ? 'cursor-pointer bg-white text-gray-900 shadow-sm'
-                                    : 'cursor-not-allowed bg-gray-50 text-gray-200',
-                                  active ? 'ring-2 ring-indigo-500' : '',
-                                  'group relative flex items-center justify-center rounded-md border px-4 py-3 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1'
-                                ]"
-                              >
-                                <span>{{ size.name }}</span>
-                                <span
-                                  v-if="size.inStock"
-                                  :class="[
-                                    active ? 'border' : 'border-2',
-                                    checked ? 'border-indigo-500' : 'border-transparent',
-                                    'pointer-events-none absolute -inset-px rounded-md'
-                                  ]"
-                                  aria-hidden="true"
-                                />
-                                <span
-                                  v-else
-                                  aria-hidden="true"
-                                  class="pointer-events-none absolute -inset-px rounded-md border-2 border-gray-200"
-                                >
-                                  <svg
-                                    class="absolute inset-0 h-full w-full stroke-2 text-gray-200"
-                                    viewBox="0 0 100 100"
-                                    preserveAspectRatio="none"
-                                    stroke="currentColor"
-                                  >
-                                    <line
-                                      x1="0"
-                                      y1="100"
-                                      x2="100"
-                                      y2="0"
-                                      vector-effect="non-scaling-stroke"
-                                    />
-                                  </svg>
-                                </span>
-                              </div>
-                            </RadioGroupOption>
-                          </RadioGroup>
-                        </fieldset>
-
-                        <button
-                          type="submit"
-                          class="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                          Add to bag
-                        </button>
-                      </form>
+                      <button
+                        @click="emit('onClickAdd')"
+                        class="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      >
+                        <span v-if="product.isAdded">Remove from bag</span>
+                        <span v-else>Add to bag</span>
+                      </button>
                     </section>
                   </div>
                 </div>
