@@ -1,8 +1,12 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Dialog, DialogPanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { useAuthStore } from '../stores/auth'
+
+const authStore = useAuthStore()
+const username = computed(() => authStore.user.username)
 
 const mobileMenuOpen = ref(false)
 
@@ -20,14 +24,15 @@ const emit = defineEmits(['open-drawer'])
       aria-label="Global"
     >
       <div class="flex lg:flex-1">
-        <a href="#" class="-m-1.5 p-1.5">
-          <span class="sr-only">Your Company</span>
-          <img
-            class="h-8 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt=""
-          />
-        </a>
+        <RouterLink to="/"
+          ><div class="-m-1.5 p-1.5">
+            <span class="sr-only">Shop</span>
+            <img
+              class="h-8 w-auto"
+              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+              alt=""
+            /></div
+        ></RouterLink>
       </div>
       <div class="flex lg:hidden">
         <button
@@ -39,16 +44,24 @@ const emit = defineEmits(['open-drawer'])
           <Bars3Icon class="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
-      <div class="hidden lg:flex lg:gap-x-12">
+      <!-- <div class="hidden lg:flex lg:gap-x-12">
         <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Products</a>
         <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Features</a>
         <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Marketplace</a>
         <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Company</a>
-      </div>
+      </div> -->
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-        <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
-          >Log in <span aria-hidden="true">&rarr;</span></a
-        >
+        <RouterLink v-if="username" to="/logout">
+          <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
+            >Logout ({{ username }}) <span aria-hidden="true">&larr;</span></a
+          >
+        </RouterLink>
+        <RouterLink v-else to="/login">
+          <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
+            >Log in <span aria-hidden="true">&rarr;</span></a
+          >
+        </RouterLink>
+
         <a
           href="#"
           class="text-sm font-semibold leading-6 text-gray-900 ml-4"
@@ -82,7 +95,7 @@ const emit = defineEmits(['open-drawer'])
         </div>
         <div class="mt-6 flow-root">
           <div class="-my-6 divide-y divide-gray-500/10">
-            <div class="space-y-2 py-6">
+            <!-- <div class="space-y-2 py-6">
               <a
                 href="#"
                 class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
@@ -103,7 +116,7 @@ const emit = defineEmits(['open-drawer'])
                 class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >Company</a
               >
-            </div>
+            </div> -->
             <div class="py-6">
               <a
                 href="#"
