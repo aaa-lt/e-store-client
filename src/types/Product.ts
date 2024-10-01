@@ -9,6 +9,7 @@ export interface Product {
   Category: { id: number; name: string }
   Supplier: { id: number; name: string }
   isAdded: boolean
+  userQuantity: number
 }
 
 export interface ProductResponse {

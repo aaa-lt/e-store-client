@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { ref, type PropType } from 'vue'
 
-defineProps({
+const props = defineProps({
   productName: String,
   productDescription: String,
   productPrice: Number,
   productQuantity: Number,
-  removeFromCart: { type: Function as PropType<(...args: any[]) => any>, required: true }
+  userQuantity: Number,
+  removeFromCart: { type: Function as PropType<(...args: any[]) => any>, required: true },
+  updateQuantity: { type: Function, required: true }
 })
 
-const quantity = ref(1)
+const quantity = ref(props.userQuantity)
 </script>
 
 <template>
@@ -32,6 +34,61 @@ const quantity = ref(1)
       <!-- <p class="mt-1 text-sm text-gray-500">Quantity:</p> -->
     </div>
     <div class="flex flex-1 items-end justify-between text-sm">
+      <!-- <div class="flex items-center">
+        <button
+          type="button"
+          id="decrement-button"
+          data-input-counter-decrement="counter-input"
+          class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
+        >
+          <svg
+            class="h-2.5 w-2.5 text-gray-900"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 18 2"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M1 1h16"
+            />
+          </svg>
+        </button>
+        <input
+          type="text"
+          id="counter-input"
+          data-input-counter
+          class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0"
+          placeholder=""
+          value="2"
+          required
+        />
+        <button
+          type="button"
+          id="increment-button"
+          data-input-counter-increment="counter-input"
+          class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
+        >
+          <svg
+            class="h-2.5 w-2.5 text-gray-900"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 18 18"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 1v16M1 9h16"
+            />
+          </svg>
+        </button>
+      </div> -->
       <div class="text-gray-500 flex items-center">
         <label class="text-sm text-gray-500" for="quantity">Quantity:</label>
         <input
@@ -39,7 +96,10 @@ const quantity = ref(1)
           name="quantity"
           id="quantity"
           class="p-1.5 w-full mr-5"
-          :value="quantity"
+          min="1"
+          :max="productQuantity"
+          v-model="quantity"
+          @input="updateQuantity(quantity)"
         />
       </div>
 

@@ -29,7 +29,7 @@ const emit = defineEmits(['open-drawer'])
             <span class="sr-only">Shop</span>
             <img
               class="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
               alt=""
             /></div
         ></RouterLink>

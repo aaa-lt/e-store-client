@@ -4,6 +4,7 @@ import LoginPage from '@/pages/LoginPage.vue'
 import RegisterPage from '@/pages/RegisterPage.vue'
 import NotFound from '@/pages/NotFound.vue'
 import { useAuthStore } from '../stores/auth'
+import OrdersPage from '@/pages/OrdersPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,14 @@ const router = createRouter({
         authStore.logout()
 
         return { name: 'Login' }
+      }
+    },
+    {
+      path: '/orders',
+      name: 'Orders',
+      component: OrdersPage,
+      meta: {
+        requiresAuth: true
       }
     }
   ]

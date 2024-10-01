@@ -1,10 +1,14 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import { type PropType, computed } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import CartItem from './CartItem.vue'
 import type { Product } from '@/types/Product'
+import { useAuthStore } from '../stores/auth'
+
+const authStore = useAuthStore()
+const username = computed(() => authStore.user.username)
 
 defineProps({
   items: {
@@ -15,10 +19,14 @@ defineProps({
     required: true,
     type: Boolean
   },
-  totalPrice: Number
+  totalPrice: Number,
+  isCreatingOrder: {
+    type: Boolean,
+    required: true
+  }
 })
 
-const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder'])
+const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder', 'updateUserQuantity'])
 </script>
 <template>
   <TransitionRoot as="template" :show="open">
@@ -68,6 +76,9 @@ const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder'])
                     </div>
 
                     <div class="mt-8">
+                      <div v-if="totalPrice === 0" class="text-center text-xl">
+                        Cart is empty =(
+                      </div>
                       <div class="flow-root">
                         <ul v-auto-animate role="list" class="-my-6 divide-y divide-gray-200">
                           <li v-for="item in items" :key="item.id" class="flex py-6">
@@ -76,14 +87,17 @@ const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder'])
                               :product-description="item.description"
                               :product-price="item.price"
                               :product-quantity="item.quantity"
+                              :user-quantity="item.userQuantity"
                               :remove-from-cart="() => emit('removeFromCart', item)"
+                              :updateQuantity="
+                                (quantity: Number) => emit('updateUserQuantity', item, quantity)
+                              "
                             />
                           </li>
                         </ul>
                       </div>
                     </div>
                   </div>
-
                   <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
                     <div class="flex justify-between text-base font-medium text-gray-900">
                       <p>Subtotal</p>
@@ -95,10 +109,20 @@ const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder'])
                     <div class="mt-6">
                       <button
                         @click="() => emit('createOrder')"
+                        v-if="username"
+                        :disabled="isCreatingOrder || totalPrice === 0"
                         class="flex items-center justify-center w-full rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white cursor-pointer shadow-sm hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed"
                       >
                         Checkout
                       </button>
+                      <RouterLink
+                        to="/login"
+                        @click="() => emit('closeDrawer')"
+                        v-else
+                        class="flex items-center justify-center w-full rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white cursor-pointer shadow-sm hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed"
+                      >
+                        Log In to Checkout
+                      </RouterLink>
                     </div>
                     <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
                       <p>

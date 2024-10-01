@@ -54,7 +54,8 @@ const fetchItems = async () => {
 
     products.value = products.value.map((products) => ({
       ...products,
-      isAdded: cart.value.some((cartItem) => cartItem.id === products.id)
+      isAdded: cart.value.some((cartItem) => cartItem.id === products.id),
+      userQuantity: 1
     }))
   } catch (error) {
     console.log(error)
@@ -70,6 +71,12 @@ onMounted(async () => {
 
 watch(filters, async () => {
   await fetchItems()
+})
+
+watch(cart, () => {
+  products.value = products.value.map((product) => {
+    return { ...product, isAdded: false }
+  })
 })
 
 provide('filters', filters)

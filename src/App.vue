@@ -3,9 +3,11 @@ import PageHeader from './components/PageHeader.vue'
 import Drawer from './components/Drawer.vue'
 import { computed, provide, ref, watch } from 'vue'
 import type { Product } from './types/Product'
+import axios from 'axios'
 
 const drawerOpen = ref(false)
 const cart = ref<Product[]>([])
+const isCreatingOrder = ref(false)
 const totalPrice = computed(() => cart.value.reduce((total, item) => total + item.price, 0))
 
 const addToCart = (item: Product) => {
@@ -33,19 +35,29 @@ const closeDrawer = () => {
   drawerOpen.value = false
 }
 
+const updateUserQuantity = (item: Product, quantity: number) => {
+  console.log(quantity)
+  item.userQuantity = quantity
+}
+
 const createOrder = async () => {
   try {
+    isCreatingOrder.value = true
     console.log(cart.value)
-    // await axios.post('http://localhost:3000/orders', {
-    //   products: cart.value.map((product) => ({
-    //     ProductId: product.id,
-    //     quantity: 1
-    //   }))
-    // })
+    console.log(
+      await axios.post('http://localhost:3000/orders', {
+        products: cart.value.map((product) => ({
+          ProductId: product.id,
+          quantity: product.userQuantity
+        }))
+      })
+    )
 
-    // cart.value = []
+    cart.value = []
   } catch (error) {
     console.log(error)
+  } finally {
+    isCreatingOrder.value = false
   }
 }
 
@@ -65,8 +77,10 @@ provide('cart', { cart, addToCart, removeFromCart, updateCart })
     :open="drawerOpen"
     :items="cart"
     :total-price="totalPrice"
+    :is-creating-order="isCreatingOrder"
     @close-drawer="closeDrawer"
     @remove-from-cart="removeFromCart"
+    @update-user-quantity="updateUserQuantity"
     @create-order="createOrder"
   />
   <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
