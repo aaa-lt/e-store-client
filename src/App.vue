@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import PageHeader from './components/PageHeader.vue'
 import Drawer from './components/Drawer.vue'
-import { computed, provide, ref, watch } from 'vue'
+import { computed, provide, ref, watch, onMounted } from 'vue'
 import type { Product } from './types/Product'
 import axios from 'axios'
 
 const drawerOpen = ref(false)
 const cart = ref<Product[]>([])
 const isCreatingOrder = ref(false)
-const totalPrice = computed(() => cart.value.reduce((total, item) => total + item.price, 0))
+const totalPrice = computed(() =>
+  cart.value.reduce((total, item) => total + item.price * item.userQuantity, 0)
+)
 
 const addToCart = (item: Product) => {
   cart.value.push(item)
-  item.isAdded = true
 }
 
 const removeFromCart = (item: Product) => {
   cart.value.splice(cart.value.indexOf(item), 1)
-  item.isAdded = false
 }
 
 const updateCart = (item: Product) => {
@@ -36,14 +36,13 @@ const closeDrawer = () => {
 }
 
 const updateUserQuantity = (item: Product, quantity: number) => {
-  console.log(quantity)
   item.userQuantity = quantity
 }
 
 const createOrder = async () => {
   try {
     isCreatingOrder.value = true
-    console.log(cart.value)
+
     console.log(
       await axios.post('http://localhost:3000/orders', {
         products: cart.value.map((product) => ({
@@ -60,6 +59,11 @@ const createOrder = async () => {
     isCreatingOrder.value = false
   }
 }
+
+onMounted(() => {
+  const localCart = localStorage.getItem('cart')
+  cart.value = localCart ? JSON.parse(localCart) : []
+})
 
 watch(
   cart,

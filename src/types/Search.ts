@@ -13,6 +13,7 @@ export interface Filters {
   maxPrice?: number
   creationDate?: string
   page: number
+  limit: number
 }
 
 export interface PaginationMeta {

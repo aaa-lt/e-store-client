@@ -51,15 +51,20 @@ const emit = defineEmits(['open-drawer'])
         <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Company</a>
       </div> -->
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+        <RouterLink to="/orders">
+          <button>Orders</button>
+        </RouterLink>
+      </div>
+      <div class="hidden lg:flex lg:flex-1 lg:justify-end">
         <RouterLink v-if="username" to="/logout">
-          <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
-            >Logout ({{ username }}) <span aria-hidden="true">&larr;</span></a
-          >
+          <button class="text-sm font-semibold leading-6 text-gray-900">
+            Logout ({{ username }}) <span aria-hidden="true">&larr;</span>
+          </button>
         </RouterLink>
         <RouterLink v-else to="/login">
-          <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
-            >Log in <span aria-hidden="true">&rarr;</span></a
-          >
+          <button class="text-sm font-semibold leading-6 text-gray-900">
+            Log in <span aria-hidden="true">&rarr;</span>
+          </button>
         </RouterLink>
 
         <a

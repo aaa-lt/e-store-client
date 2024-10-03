@@ -19,7 +19,7 @@ const paginationMeta = ref<PaginationMeta>({
   per_page: 0,
   remaining_items: 0
 })
-const filters = reactive<Filters>({ page: 1 })
+const filters = reactive<Filters>({ page: 1, limit: 10 })
 
 const paginationNextPage = () => {
   if (filters.page < paginationMeta.value.total_pages) {
@@ -33,10 +33,15 @@ const paginationPreviousPage = () => {
   }
 }
 
+const paginationSetLimit = (limit: number) => {
+  filters.limit = limit
+}
+
 const fetchItems = async () => {
   try {
     const params: Filters = {
       page: filters.page,
+      limit: filters.limit,
       ...(filters.sortBy && { sortBy: filters.sortBy }),
       ...(filters.searchQuery && { name: filters.searchQuery }),
       ...(filters.categoryName && { categoryName: filters.categoryName }),
@@ -63,15 +68,23 @@ const fetchItems = async () => {
 }
 
 onMounted(async () => {
-  const localCart = localStorage.getItem('cart')
-  cart.value = localCart ? JSON.parse(localCart) : []
-
   await fetchItems()
 })
 
 watch(filters, async () => {
   await fetchItems()
 })
+
+watch(
+  cart,
+  () => {
+    products.value = products.value.map((products) => ({
+      ...products,
+      isAdded: cart.value.some((cartItem) => cartItem.id === products.id)
+    }))
+  },
+  { deep: true }
+)
 
 watch(cart, () => {
   products.value = products.value.map((product) => {
@@ -83,7 +96,8 @@ provide('filters', filters)
 provide('pagination', {
   paginationMeta,
   paginationNextPage,
-  paginationPreviousPage
+  paginationPreviousPage,
+  paginationSetLimit
 })
 </script>
 

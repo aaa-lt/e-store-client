@@ -22,11 +22,11 @@ const closeModal = () => (modalOpen.value = false)
     <div
       class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7"
     >
-      <!-- <img
-        src="https://tailwindui.com/img/ecommerce-images/product-quick-preview-02-detail.jpg"
+      <img
+        src="https://tailwindui.com/plus/img/ecommerce-images/category-page-04-image-card-03.jpg"
         alt="Two each of gray, white, and black shirts arranged on table."
         class="h-full w-full object-cover object-center group-hover:opacity-75"
-      /> -->
+      />
     </div>
     <h3 class="mt-4 text-sm text-gray-700">{{ product.name }}</h3>
     <p class="mt-1 text-lg font-medium text-gray-900">${{ product.price }}</p>

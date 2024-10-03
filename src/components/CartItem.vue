@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type PropType } from 'vue'
+import { ref, type PropType, watch } from 'vue'
 
 const props = defineProps({
   productName: String,
@@ -12,33 +12,52 @@ const props = defineProps({
 })
 
 const quantity = ref(props.userQuantity)
+
+watch(
+  quantity,
+  () => {
+    if (quantity.value < 1) {
+      quantity.value = 1
+    }
+    if (quantity.value > props.productQuantity) {
+      quantity.value = props.productQuantity
+    }
+    props.updateQuantity(quantity.value)
+  },
+  { deep: true }
+)
 </script>
 
 <template>
-  <!-- <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+  <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
     <img
-      src="https://tailwindui.com/img/ecommerce-images/product-quick-preview-02-detail.jpg"
+      src="https://tailwindui.com/plus/img/ecommerce-images/category-page-04-image-card-03.jpg"
       alt="Two each of gray, white, and black shirts arranged on table."
       class="h-full w-full object-cover object-center"
     />
-  </div> -->
+  </div>
 
   <div class="ml-4 flex flex-1 flex-col">
     <div>
       <div class="flex justify-between text-base font-medium text-gray-900">
         <h3>
-          <a href="#">{{ productName }}</a>
+          <span>{{ productName }}</span>
         </h3>
-        <p class="ml-4">${{ productPrice }}</p>
+        <div class="text-right">
+          <p class="ml-4">${{ productPrice * userQuantity }}</p>
+          <p v-if="userQuantity > 1" class="mt-1 text-sm font-light text-slate-500">
+            ${{ productPrice }}/piece
+          </p>
+        </div>
       </div>
       <!-- <p class="mt-1 text-sm text-gray-500">Quantity:</p> -->
     </div>
-    <div class="flex flex-1 items-end justify-between text-sm">
-      <!-- <div class="flex items-center">
+    <div class="flex flex-1 items-end justify-between text-sm mt-1">
+      <div class="flex items-center">
         <button
           type="button"
           id="decrement-button"
-          data-input-counter-decrement="counter-input"
+          @click="quantity--"
           class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
         >
           <svg
@@ -62,14 +81,15 @@ const quantity = ref(props.userQuantity)
           id="counter-input"
           data-input-counter
           class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0"
-          placeholder=""
-          value="2"
+          min="1"
+          :max="productQuantity"
+          v-model="quantity"
           required
         />
         <button
           type="button"
           id="increment-button"
-          data-input-counter-increment="counter-input"
+          @click="quantity++"
           class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
         >
           <svg
@@ -88,19 +108,6 @@ const quantity = ref(props.userQuantity)
             />
           </svg>
         </button>
-      </div> -->
-      <div class="text-gray-500 flex items-center">
-        <label class="text-sm text-gray-500" for="quantity">Quantity:</label>
-        <input
-          type="number"
-          name="quantity"
-          id="quantity"
-          class="p-1.5 w-full mr-5"
-          min="1"
-          :max="productQuantity"
-          v-model="quantity"
-          @input="updateQuantity(quantity)"
-        />
       </div>
 
       <div class="flex">
