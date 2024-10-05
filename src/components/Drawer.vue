@@ -1,16 +1,22 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import { type PropType, computed } from 'vue'
+import { type PropType, computed, ref } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import CartItem from './CartItem.vue'
 import type { Product } from '@/types/Product'
 import { useAuthStore } from '../stores/auth'
+import api from '@/services/axiosInstance'
+import DrawerModal from './DrawerModal.vue'
 
 const authStore = useAuthStore()
-const username = computed(() => authStore.user.username)
+const username = computed(() => authStore.user)
+const isCreatingOrder = ref(false)
+const orderId = ref(null)
+const modalOpen = ref(false)
+const closeModal = () => (modalOpen.value = false)
 
-defineProps({
+const props = defineProps({
   items: {
     required: true,
     type: Array as PropType<Product[]>
@@ -19,19 +25,41 @@ defineProps({
     required: true,
     type: Boolean
   },
-  totalPrice: Number,
-  isCreatingOrder: {
-    type: Boolean,
-    required: true
-  }
+  cart: {
+    required: true,
+    type: Array as PropType<Product[]>
+  },
+  totalPrice: Number
 })
 
-const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder', 'updateUserQuantity'])
+const emit = defineEmits(['closeDrawer', 'removeFromCart', 'updateUserQuantity', 'clearCart'])
+
+const createOrder = async () => {
+  try {
+    isCreatingOrder.value = true
+
+    const order = await api.post('http://localhost:3000/orders', {
+      products: props.cart.map((product) => ({
+        ProductId: product.id,
+        quantity: product.userQuantity
+      }))
+    })
+
+    orderId.value = order.data.data.id
+    emit('closeDrawer')
+    modalOpen.value = true
+    emit('clearCart')
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isCreatingOrder.value = false
+  }
+}
 </script>
 <template>
   <TransitionRoot as="template" :show="open">
     <Dialog class="relative z-10" @close="() => emit('closeDrawer')">
-      <TransitionChild
+      <!-- <TransitionChild
         as="template"
         enter="ease-in-out duration-500"
         enter-from="opacity-0"
@@ -41,7 +69,7 @@ const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder', 'updat
         leave-to="opacity-0"
       >
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-      </TransitionChild>
+      </TransitionChild> -->
 
       <div class="fixed inset-0 overflow-hidden">
         <div class="absolute inset-0 overflow-hidden">
@@ -57,7 +85,7 @@ const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder', 'updat
             >
               <DialogPanel class="pointer-events-auto w-screen max-w-md">
                 <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-                  <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                  <div class="flex-1 flex flex-col overflow-y-auto px-4 py-6 sm:px-6">
                     <div class="flex items-start justify-between">
                       <DialogTitle class="text-lg font-medium text-gray-900"
                         >Shopping cart</DialogTitle
@@ -75,9 +103,20 @@ const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder', 'updat
                       </div>
                     </div>
 
-                    <div class="mt-8">
-                      <div v-if="totalPrice === 0" class="text-center text-xl">
-                        Cart is empty =(
+                    <div
+                      class="h-full flex"
+                      :class="totalPrice === 0 ? 'items-center justify-center' : 'mt-8'"
+                    >
+                      <div v-if="totalPrice === 0" class="text-center text-xl space-y-6">
+                        <div>Cart is empty =(</div>
+                        <button
+                          type="button"
+                          class="font-medium text-indigo-600 hover:text-indigo-500"
+                          @click="() => emit('closeDrawer')"
+                        >
+                          Continue Shopping
+                          <span aria-hidden="true"> &rarr;</span>
+                        </button>
                       </div>
                       <div class="flow-root">
                         <ul v-auto-animate role="list" class="-my-6 divide-y divide-gray-200">
@@ -98,17 +137,14 @@ const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder', 'updat
                       </div>
                     </div>
                   </div>
-                  <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
+                  <div v-if="totalPrice !== 0" class="border-t border-gray-200 px-4 py-6 sm:px-6">
                     <div class="flex justify-between text-base font-medium text-gray-900">
                       <p>Subtotal</p>
                       <p>${{ totalPrice }}</p>
                     </div>
-                    <p class="mt-0.5 text-sm text-gray-500">
-                      Shipping and taxes calculated at checkout.
-                    </p>
                     <div class="mt-6">
                       <button
-                        @click="() => emit('createOrder')"
+                        @click="createOrder"
                         v-if="username"
                         :disabled="isCreatingOrder || totalPrice === 0"
                         class="flex items-center justify-center w-full rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white cursor-pointer shadow-sm hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed"
@@ -146,4 +182,5 @@ const emit = defineEmits(['closeDrawer', 'removeFromCart', 'createOrder', 'updat
       </div>
     </Dialog>
   </TransitionRoot>
+  <DrawerModal @close-modal="closeModal" :open="modalOpen" :order-id="orderId" />
 </template>

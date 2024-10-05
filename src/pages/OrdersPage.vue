@@ -1,25 +1,66 @@
 <script setup lang="ts">
 import OrderCard from '@/components/OrderCard.vue'
 import type { Order } from '@/types/Order'
-import axios from 'axios'
-import { onMounted, ref } from 'vue'
+import api from '../services/axiosInstance'
+import { onMounted, ref, provide, reactive, watch } from 'vue'
+import Pagination from '@/components/Pagination.vue'
 
 const orders = ref<Order[]>([])
 
+const paginationMeta = ref<PaginationMeta>({
+  total_items: 0,
+  total_pages: 0,
+  current_page: 0,
+  per_page: 0,
+  remaining_items: 0
+})
+const filters = reactive<Filters>({ page: 1, limit: 10 })
+
+const paginationNextPage = () => {
+  if (filters.page < paginationMeta.value.total_pages) {
+    filters.page++
+  }
+}
+
+const paginationPreviousPage = () => {
+  if (filters.page > 1) {
+    filters.page--
+  }
+}
+
+const paginationSetLimit = (limit: number) => {
+  filters.limit = limit
+}
+
 const fetchItems = async () => {
   try {
-    const { data }: { data: Order[] } = await axios.get('http://localhost:3000/orders?limit=1000')
-    orders.value = data
+    const params = { page: filters.page, limit: filters.limit }
+    const { data }: { data: Order[] } = await api.get('http://localhost:3000/orders', {
+      params
+    })
+
+    orders.value = data.items
+    paginationMeta.value = data.meta
   } catch (error) {
     console.log(error)
   }
 }
 
 onMounted(async () => {
-  const user = JSON.parse(localStorage.getItem('user') ?? '{}')
-  axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
   await fetchItems()
-  console.log(orders.value)
+})
+
+watch(filters, async () => {
+  await fetchItems()
+  console.log(filters)
+})
+
+provide('filters', filters)
+provide('pagination', {
+  paginationMeta,
+  paginationNextPage,
+  paginationPreviousPage,
+  paginationSetLimit
 })
 </script>
 
@@ -70,10 +111,12 @@ onMounted(async () => {
         </div>
 
         <div class="mt-6 flow-root sm:mt-8">
-          <div class="divide-y divide-gray-200">
+          <div v-auto-animate class="divide-y divide-gray-200">
             <OrderCard v-for="order in orders" :key="order.id" :order="order" />
           </div>
         </div>
+
+        <Pagination />
 
         <nav
           class="mt-6 flex items-center justify-center sm:mt-8"

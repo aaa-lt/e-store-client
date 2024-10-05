@@ -22,7 +22,10 @@ watch(
     if (quantity.value > props.productQuantity) {
       quantity.value = props.productQuantity
     }
-    props.updateQuantity(quantity.value)
+    if (isNaN(Number(quantity.value))) {
+      quantity.value = props.userQuantity
+    }
+    props.updateQuantity(Number(quantity.value))
   },
   { deep: true }
 )

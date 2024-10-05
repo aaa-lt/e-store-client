@@ -5,6 +5,7 @@ import RegisterPage from '@/pages/RegisterPage.vue'
 import NotFound from '@/pages/NotFound.vue'
 import { useAuthStore } from '../stores/auth'
 import OrdersPage from '@/pages/OrdersPage.vue'
+import OrderPage from '@/pages/OrderPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,19 +43,22 @@ const router = createRouter({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/orders/:id',
+      name: 'Order',
+      component: OrderPage,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (!authStore.user.token) {
-      next({ name: 'Login' })
-    } else {
-      next()
-    }
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/login')
   } else {
     next()
   }

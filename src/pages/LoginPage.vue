@@ -11,8 +11,8 @@ const error = ref<AxiosError | undefined>()
 const login = async () => {
   try {
     error.value = await authStore.login(username.value, password.value)
-  } catch (error) {
-    console.error('Login failed:', error)
+  } catch (e) {
+    error.value = e
   }
 }
 </script>
@@ -57,7 +57,12 @@ const login = async () => {
               />
             </div>
             <div v-if="error" class="text-sm font-medium text-red-500">
-              Invalid username or password
+              <span v-if="error.response?.status === 401">Invalid username or password</span>
+              <ul v-if="error.response?.status === 400">
+                <li v-for="error in error.response?.data.details" :key="error">
+                  {{ error.message }}
+                </li>
+              </ul>
             </div>
             <button
               type="submit"

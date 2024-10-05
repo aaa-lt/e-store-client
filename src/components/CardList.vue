@@ -17,7 +17,7 @@ defineEmits(['updateCart'])
   <div class="flex flex-col justify-between h-full">
     <div
       v-auto-animate
-      class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
+      class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8 mt-4"
     >
       <Card
         v-for="product in props.products"

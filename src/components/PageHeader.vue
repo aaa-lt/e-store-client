@@ -4,9 +4,11 @@ import { computed, ref } from 'vue'
 import { Dialog, DialogPanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '../stores/auth'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 
 const authStore = useAuthStore()
-const username = computed(() => authStore.user.username)
+const username = computed(() => authStore.user)
 
 const mobileMenuOpen = ref(false)
 
@@ -50,19 +52,86 @@ const emit = defineEmits(['open-drawer'])
         <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Marketplace</a>
         <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Company</a>
       </div> -->
-      <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+      <!-- <div class="hidden lg:flex lg:flex-1 lg:justify-end items-center">
         <RouterLink to="/orders">
           <button>Orders</button>
         </RouterLink>
-      </div>
-      <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-        <RouterLink v-if="username" to="/logout">
-          <button class="text-sm font-semibold leading-6 text-gray-900">
-            Logout ({{ username }}) <span aria-hidden="true">&larr;</span>
-          </button>
-        </RouterLink>
+      </div> -->
+      <div class="hidden lg:flex lg:flex-1 lg:justify-end items-center">
+        <div v-if="username">
+          <Menu as="div" class="relative inline-block text-left">
+            <div>
+              <MenuButton
+                class="inline-flex w-full justify-center items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-90"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                  />
+                </svg>
+
+                <span>Profile ({{ username }})</span>
+                <ChevronDownIcon class="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
+              </MenuButton>
+            </div>
+
+            <transition
+              enter-active-class="transition ease-out duration-100"
+              enter-from-class="transform opacity-0 scale-95"
+              enter-to-class="transform opacity-100 scale-100"
+              leave-active-class="transition ease-in duration-75"
+              leave-from-class="transform opacity-100 scale-100"
+              leave-to-class="transform opacity-0 scale-95"
+            >
+              <MenuItems
+                class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              >
+                <div class="py-1">
+                  <MenuItem v-slot="{ active, close }">
+                    <RouterLink to="/orders">
+                      <span
+                        @click="close"
+                        :class="[
+                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          'block px-4 py-2 text-sm cursor-pointer'
+                        ]"
+                        >My orders</span
+                      >
+                    </RouterLink>
+                  </MenuItem>
+                </div>
+
+                <div class="py-1">
+                  <MenuItem v-slot="{ active }">
+                    <RouterLink
+                      to="/logout"
+                      :class="[
+                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        'block px-4 py-2 text-sm cursor-pointer'
+                      ]"
+                    >
+                      Log out
+                    </RouterLink>
+                  </MenuItem>
+                </div>
+              </MenuItems>
+            </transition>
+          </Menu>
+          <button
+            class="text-sm font-semibold leading-6 text-gray-900 flex items-center gap-1"
+          ></button>
+        </div>
         <RouterLink v-else to="/login">
-          <button class="text-sm font-semibold leading-6 text-gray-900">
+          <button class="text-sm font-semibold leading-6 text-gray-900 px-3 py-2">
             Log in <span aria-hidden="true">&rarr;</span>
           </button>
         </RouterLink>

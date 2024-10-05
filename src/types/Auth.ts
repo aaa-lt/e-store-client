@@ -1,5 +1,6 @@
 export interface AuthState {
-  token: string | null
+  accessToken: string | null
   refreshToken: string | null
-  username: string | null
+  user: string | null
+  isAuthenticated: boolean
 }
