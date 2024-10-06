@@ -79,7 +79,7 @@ const emit = defineEmits(['open-drawer'])
                   />
                 </svg>
 
-                <span>Profile ({{ username }})</span>
+                <span>{{ username }}</span>
                 <ChevronDownIcon class="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
               </MenuButton>
             </div>

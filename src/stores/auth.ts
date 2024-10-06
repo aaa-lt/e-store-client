@@ -34,40 +34,30 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async register(username: string, email: string, password: string) {
-      try {
-        const response = await axios.post('http://localhost:3000/auth/register', {
-          username,
-          email,
-          password
-        })
-        const { accessToken, refreshToken } = response.data
-        this.setTokens(accessToken, refreshToken)
-        this.user = username
-        this.isAuthenticated = true
+      const response = await axios.post('http://localhost:3000/auth/register', {
+        username,
+        email,
+        password
+      })
+      const { accessToken, refreshToken } = response.data
+      this.setTokens(accessToken, refreshToken)
+      this.user = username
+      this.isAuthenticated = true
 
-        router.push('/')
-      } catch (error) {
-        console.error('Registration error:', error)
-        throw error
-      }
+      router.push('/')
     },
 
     async login(username: string, password: string) {
-      try {
-        const response = await axios.post('http://localhost:3000/auth/login', {
-          username,
-          password
-        })
-        const { accessToken, refreshToken } = response.data
-        this.setTokens(accessToken, refreshToken)
-        this.user = username
-        this.isAuthenticated = true
+      const response = await axios.post('http://localhost:3000/auth/login', {
+        username,
+        password
+      })
+      const { accessToken, refreshToken } = response.data
+      this.setTokens(accessToken, refreshToken)
+      this.user = username
+      this.isAuthenticated = true
 
-        router.push('/')
-      } catch (error) {
-        console.error('Login error:', error)
-        throw error
-      }
+      router.push('/')
     },
     async refreshTokens() {
       try {

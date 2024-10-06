@@ -103,7 +103,7 @@ onBeforeMount(() => {
             </div>
             <div class="flex items-center">
               <span class="mr-1">Status:</span>
-              <OrderStatus :status="order.status" />
+              <OrderStatus :status="order.status ? order.status : 'N/A'" />
             </div>
 
             <RouterLink

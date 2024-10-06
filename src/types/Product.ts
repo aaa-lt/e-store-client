@@ -8,6 +8,7 @@ export interface Product {
   quantity: number
   Category: { id: number; name: string }
   Supplier: { id: number; name: string }
+  color: string
   isAdded: boolean
   userQuantity: number
 }

@@ -1,9 +1,17 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { Order } from '@/types/Order'
 import OrderStatus from '@/components/OrderStatus.vue'
 
-defineProps<{ order: Order }>()
+const props = defineProps<{ order: Order }>()
+
+const totalPrice = computed(() =>
+  props.order.Products?.reduce(
+    (total, item) => total + (item.price || 0) * (item.OrderProduct?.quantity || 0),
+    0
+  )
+)
 </script>
 <template>
   <div class="flex flex-wrap items-center gap-y-4 py-6">
@@ -23,7 +31,7 @@ defineProps<{ order: Order }>()
 
     <dl class="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
       <dt class="text-base font-medium text-gray-500">Price:</dt>
-      <dd class="mt-1.5 text-base font-semibold text-gray-900">$0</dd>
+      <dd class="mt-1.5 text-base font-semibold text-gray-900">${{ totalPrice }}</dd>
     </dl>
 
     <dl class="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
@@ -37,11 +45,12 @@ defineProps<{ order: Order }>()
 
     <div class="w-full grid sm:grid-cols-2 lg:flex lg:w-64 lg:items-center lg:justify-end gap-4">
       <!-- <button
-                  type="button"
-                  class="w-full rounded-lg border border-red-700 px-3 py-2 text-center text-sm font-medium text-red-700 hover:bg-red-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 lg:w-auto"
-                >
-                  Cancel order
-                </button> -->
+        v-if="order.status === 'Pending'"
+        type="button"
+        class="w-full rounded-lg border border-red-700 px-3 py-2 text-center text-sm font-medium text-red-700 hover:bg-red-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 lg:w-auto"
+      >
+        Cancel order
+      </button> -->
       <RouterLink
         :to="'/orders/' + order.id"
         class="w-full inline-flex justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 lg:w-auto"

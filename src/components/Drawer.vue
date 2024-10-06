@@ -127,6 +127,7 @@ const createOrder = async () => {
                               :product-price="item.price"
                               :product-quantity="item.quantity"
                               :user-quantity="item.userQuantity"
+                              :bgColor="item.color"
                               :remove-from-cart="() => emit('removeFromCart', item)"
                               :updateQuantity="
                                 (quantity: Number) => emit('updateUserQuantity', item, quantity)

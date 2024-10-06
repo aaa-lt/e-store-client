@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import type { AxiosError } from 'axios'
+import axios, { type AxiosError } from 'axios'
 
 const authStore = useAuthStore()
 
@@ -12,9 +12,14 @@ const error = ref<AxiosError | undefined>()
 
 const register = async () => {
   try {
-    error.value = await authStore.register(username.value, email.value, password.value)
-  } catch (error) {
-    console.error('Registration failed:', error)
+    await authStore.register(username.value, email.value, password.value)
+    error.value = undefined
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      error.value = err
+    } else {
+      console.error('An unexpected error occurred:', err)
+    }
   }
 }
 </script>
@@ -36,6 +41,7 @@ const register = async () => {
                 type="text"
                 name="username"
                 id="username"
+                autocomplete="username"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5"
                 placeholder="username"
                 required
@@ -50,6 +56,7 @@ const register = async () => {
                 type="email"
                 name="email"
                 id="email"
+                autocomplete="email"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5"
                 placeholder="name@company.com"
                 required
@@ -64,6 +71,7 @@ const register = async () => {
                 type="password"
                 name="password"
                 id="password"
+                autocomplete="current-password"
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5 d"
                 required
@@ -76,6 +84,7 @@ const register = async () => {
                   {{ error.message }}
                 </li>
               </ul>
+              <span v-if="error.response?.status === 409">{{ error.response?.data.error }}</span>
             </div>
             <button
               type="submit"

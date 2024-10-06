@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronDownIcon, FunnelIcon } from '@heroicons/vue/20/solid'
-import { inject, ref } from 'vue'
+import { inject, ref, watch } from 'vue'
 import type { Filters, SortOption } from '@/types/Search'
+import { debounce } from 'lodash'
 
 defineEmits(['mobileFiltersToggle'])
 
@@ -13,6 +14,7 @@ const sortOptions = ref<SortOption[]>([
   { name: 'Price: Low to High', value: 'price', current: false },
   { name: 'Price: High to Low', value: '-price', current: false }
 ])
+const searchInput = ref<string>('')
 
 const onChageSort = (selectedOption: SortOption) => {
   sortOptions.value.forEach((option) => {
@@ -21,10 +23,13 @@ const onChageSort = (selectedOption: SortOption) => {
   filters.sortBy = selectedOption.value
 }
 
-const onChangeSearchInput = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  filters.searchQuery = target.value
-}
+watch(
+  searchInput,
+  debounce(() => {
+    filters.searchQuery = searchInput.value
+  }, 300),
+  { deep: true }
+)
 </script>
 <template>
   <div
@@ -116,8 +121,8 @@ const onChangeSearchInput = (event: Event) => {
             type="search"
             id="default-search"
             class="block w-full pl-10 p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Search Mockups, Logos..."
-            @input="onChangeSearchInput"
+            placeholder="Search"
+            v-model="searchInput"
             autocomplete="off"
           />
         </div>

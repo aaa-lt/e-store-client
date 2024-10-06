@@ -35,7 +35,7 @@ const paginationSetLimit = (limit: number) => {
 const fetchItems = async () => {
   try {
     const params = { page: filters.page, limit: filters.limit }
-    const { data }: { data: Order[] } = await api.get('http://localhost:3000/orders', {
+    const { data }: ProductResponse = await api.get('http://localhost:3000/orders', {
       params
     })
 
@@ -72,6 +72,7 @@ provide('pagination', {
           <h2 class="text-4xl font-bold tracking-tight text-gray-900">My orders</h2>
 
           <div
+            v-if="orders.length !== 0"
             class="mt-6 gap-4 space-y-4 sm:mt-0 sm:flex sm:items-center sm:justify-end sm:space-y-0"
           >
             <div>
@@ -111,106 +112,18 @@ provide('pagination', {
         </div>
 
         <div class="mt-6 flow-root sm:mt-8">
-          <div v-auto-animate class="divide-y divide-gray-200">
+          <div
+            v-if="orders.length === 0"
+            class="h-full flex items-center justify-center text-2xl text-gray-500"
+          >
+            No orders found
+          </div>
+          <div v-else v-auto-animate class="divide-y divide-gray-200">
             <OrderCard v-for="order in orders" :key="order.id" :order="order" />
           </div>
         </div>
 
         <Pagination />
-
-        <nav
-          class="mt-6 flex items-center justify-center sm:mt-8"
-          aria-label="Page navigation example"
-        >
-          <!-- <ul class="flex h-8 items-center -space-x-px text-sm">
-            <li>
-              <a
-                href="#"
-                class="ms-0 flex h-8 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-              >
-                <span class="sr-only">Previous</span>
-                <svg
-                  class="h-4 w-4 rtl:rotate-180"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m15 19-7-7 7-7"
-                  />
-                </svg>
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                >1</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                >2</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                aria-current="page"
-                class="z-10 flex h-8 items-center justify-center border border-primary-300 bg-primary-50 px-3 leading-tight text-primary-600 hover:bg-primary-100 hover:text-primary-700"
-                >3</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                >...</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                >100</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex h-8 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-              >
-                <span class="sr-only">Next</span>
-                <svg
-                  class="h-4 w-4 rtl:rotate-180"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m9 5 7 7-7 7"
-                  />
-                </svg>
-              </a>
-            </li>
-          </ul> -->
-        </nav>
       </div>
     </div>
   </section>

@@ -10,9 +10,14 @@ const error = ref<AxiosError | undefined>()
 
 const login = async () => {
   try {
-    error.value = await authStore.login(username.value, password.value)
-  } catch (e) {
-    error.value = e
+    await authStore.login(username.value, password.value)
+    error.value = undefined
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      error.value = err
+    } else {
+      console.error('An unexpected error occurred:', err)
+    }
   }
 }
 </script>

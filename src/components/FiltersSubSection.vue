@@ -1,24 +1,26 @@
 <script setup lang="ts">
 import type { Filters } from '@/types/Search'
-import { inject } from 'vue'
+import { inject, ref, watch } from 'vue'
+import { debounce } from 'lodash'
 
 const filters = inject('filters') as Filters
+const minPrice = ref<number | null>(null)
+const maxPrice = ref<number | null>(null)
+const categoryInput = ref<string | null>(null)
+const supplierInput = ref<string | null>(null)
+const dateInput = ref<string | null>(null)
 
-const onChangeInput = (key: keyof typeof filters) => (event: Event) => {
-  const target = event.target as HTMLInputElement
-
-  if (key === 'minPrice' || key === 'maxPrice') {
-    filters[key] = parseInt(target.value)
-  } else {
-    filters[key] = target.value
-  }
-}
-
-const onChangeDateInput = onChangeInput('creationDate')
-const onChangeCategoryNameInput = onChangeInput('categoryName')
-const onChangeSupplierNameInput = onChangeInput('supplierName')
-const onChangeMinPriceInput = onChangeInput('minPrice')
-const onChangeMaxPriceInput = onChangeInput('maxPrice')
+watch(
+  [minPrice, maxPrice, dateInput, categoryInput, supplierInput],
+  debounce(() => {
+    filters.minPrice = minPrice.value ? parseInt(minPrice.value) : null
+    filters.maxPrice = maxPrice.value ? parseInt(maxPrice.value) : null
+    filters.creationDate = dateInput.value ?? ''
+    filters.categoryName = categoryInput.value ?? ''
+    filters.supplierName = supplierInput.value ?? ''
+  }, 300),
+  { deep: true }
+)
 </script>
 <template>
   <div class="border-b border-gray-200 py-6">
@@ -28,18 +30,16 @@ const onChangeMaxPriceInput = onChangeInput('maxPrice')
         class="ring-1 ring-inset ring-gray-300 focus:bg-slate-50 px-3 py-2 rounded-l-md w-full outline-none text-sm"
         type="text"
         name="min"
-        id=""
         placeholder="From"
-        @input="onChangeMinPriceInput"
+        v-model="minPrice"
         autocomplete="off"
       />
       <input
         class="ring-1 ring-inset ring-gray-300 focus:bg-slate-50 px-3 py-2 -ml-px rounded-r-md w-full outline-none text-sm"
         type="text"
         name="max"
-        id=""
         placeholder="To"
-        @input="onChangeMaxPriceInput"
+        v-model="maxPrice"
         autocomplete="off"
       />
     </div>
@@ -52,7 +52,7 @@ const onChangeMaxPriceInput = onChangeInput('maxPrice')
         type="date"
         name="creation_date"
         id="creation_date"
-        @input="onChangeDateInput"
+        v-model="dateInput"
       />
     </div>
   </div>
@@ -65,7 +65,7 @@ const onChangeMaxPriceInput = onChangeInput('maxPrice')
         name="category_name"
         id="category_name"
         placeholder="Category"
-        @input="onChangeCategoryNameInput"
+        v-model="categoryInput"
         autocomplete="off"
       />
     </div>
@@ -79,7 +79,7 @@ const onChangeMaxPriceInput = onChangeInput('maxPrice')
         name="supplier_name"
         id="=supplier_name"
         placeholder="Supplier"
-        @input="onChangeSupplierNameInput"
+        v-model="supplierInput"
         autocomplete="off"
       />
     </div>

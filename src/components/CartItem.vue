@@ -7,6 +7,7 @@ const props = defineProps({
   productPrice: Number,
   productQuantity: Number,
   userQuantity: Number,
+  bgColor: String,
   removeFromCart: { type: Function as PropType<(...args: any[]) => any>, required: true },
   updateQuantity: { type: Function, required: true }
 })
@@ -33,11 +34,7 @@ watch(
 
 <template>
   <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-    <img
-      src="https://tailwindui.com/plus/img/ecommerce-images/category-page-04-image-card-03.jpg"
-      alt="Two each of gray, white, and black shirts arranged on table."
-      class="h-full w-full object-cover object-center"
-    />
+    <div class="w-full h-60" :style="{ backgroundColor: bgColor }"></div>
   </div>
 
   <div class="ml-4 flex flex-1 flex-col">

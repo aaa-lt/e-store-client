@@ -54,47 +54,57 @@ const emit = defineEmits(['close-modal', 'onClickAdd'])
                   <XMarkIcon class="h-6 w-6" aria-hidden="true" />
                 </button>
 
-                <div class="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 lg:gap-x-8">
-                  <!-- sm:grid-cols-12 -->
-                  <!-- <div
+                <div
+                  class="grid sm:grid-cols-12 w-full grid-cols-1 items-start gap-x-6 gap-y-8 lg:gap-x-8"
+                >
+                  <div
                     class="aspect-h-3 aspect-w-2 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-5"
                   >
-                    <img
+                    <!-- <img
                       :src="product.imageSrc"
                       :alt="product.imageAlt"
                       class="object-cover object-center"
-                    />
-                  </div> -->
-                  <div class="sm:col-span-8 lg:col-span-7 w-full">
+                    /> -->
+                    <div class="h-full w-full object-cover object-center group-hover:opacity-75">
+                      <div class="w-full h-96" :style="{ backgroundColor: product.color }"></div>
+                    </div>
+                  </div>
+                  <div class="sm:col-span-8 lg:col-span-7 w-full h-full flex flex-col">
                     <h2 class="text-2xl font-bold text-gray-900 sm:pr-12">{{ product.name }}</h2>
 
-                    <section aria-labelledby="information-heading" class="mt-2">
-                      <h3 id="information-heading" class="sr-only">Product information</h3>
+                    <section
+                      aria-labelledby="information-heading"
+                      class="mt-2 h-full flex flex-col justify-between"
+                    >
+                      <div>
+                        <h3 id="information-heading" class="sr-only">Product information</h3>
 
-                      <p class="text-md text-gray-900 mb-4 border-b border-gray-200 pb-4">
-                        {{ product.description }}
-                      </p>
-                      <p class="text-gray-900">
-                        <span class="text-sm">Price: </span
-                        ><span class="text-xl text-black">${{ product.price }}</span>
-                      </p>
+                        <p class="text-md text-gray-900 mb-4 border-b border-gray-200 pb-4">
+                          {{ product.description }}
+                        </p>
+                        <p class="text-gray-900">
+                          <span class="text-sm">Price: </span
+                          ><span class="text-xl text-black">${{ product.price }}</span>
+                        </p>
 
-                      <p class="text-gray-900 pt-2">
-                        <span v-if="product.quantity > 0" class="text-xl text-green-700"
-                          >In stock
-                        </span>
-                        <span v-else class="text-xl text-red-500">Out of stock </span>
-                        <span class="text-sm">({{ product.quantity }} left)</span>
-                      </p>
-
-                      <button
-                        @click="emit('onClickAdd')"
-                        :disabled="product.quantity === 0"
-                        class="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                      >
-                        <span v-if="product.isAdded">Remove from bag</span>
-                        <span v-else>Add to bag</span>
-                      </button>
+                        <p class="text-gray-900 pt-2">
+                          <span v-if="product.quantity > 0" class="text-xl text-green-700"
+                            >In stock
+                          </span>
+                          <span v-else class="text-xl text-red-500">Out of stock </span>
+                          <span class="text-sm">({{ product.quantity }} left)</span>
+                        </p>
+                      </div>
+                      <div>
+                        <button
+                          @click="emit('onClickAdd')"
+                          :disabled="product.quantity === 0"
+                          class="mt-6 flex mw-6 items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        >
+                          <span v-if="product.isAdded">Remove from bag</span>
+                          <span v-else>Add to bag</span>
+                        </button>
+                      </div>
                     </section>
                   </div>
                 </div>

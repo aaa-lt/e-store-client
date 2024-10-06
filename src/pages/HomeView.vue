@@ -86,10 +86,11 @@ watch(
   { deep: true }
 )
 
-watch(cart, () => {
-  products.value = products.value.map((product) => {
-    return { ...product, isAdded: false }
-  })
+watch(cart, async () => {
+  // products.value = products.value.map((product) => {
+  //   return { ...product, isAdded: false }
+  // })
+  await fetchItems()
 })
 
 provide('filters', filters)

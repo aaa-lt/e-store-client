@@ -24,6 +24,7 @@ const topComputed = (limitValues.length * 36 + 25) * -1 + 'px'
 </script>
 <template>
   <div
+    v-if="paginationMeta.total_items > 1"
     class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 mt-4 sm:px-6"
   >
     <div class="flex flex-1 justify-between sm:hidden">
@@ -66,7 +67,7 @@ const topComputed = (limitValues.length * 36 + 25) * -1 + 'px'
           results
         </p>
       </div>
-      <div class="flex gap-4">
+      <div class="flex gap-4" v-if="paginationMeta.total_pages > 1">
         <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
           <a
             :disabled="paginationMeta.current_page === 1"
