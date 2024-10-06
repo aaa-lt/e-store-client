@@ -80,11 +80,13 @@ const register = async () => {
             <div v-if="error" class="text-sm font-medium text-red-500">
               <span v-if="error.response?.status === 401">Invalid username or password</span>
               <ul v-if="error.response?.status === 400">
-                <li v-for="error in error.response?.data.details" :key="error">
+                <li v-for="error in (error.response.data as any).details" :key="error">
                   {{ error.message }}
                 </li>
               </ul>
-              <span v-if="error.response?.status === 409">{{ error.response?.data.error }}</span>
+              <span v-if="error.response?.status === 409">{{
+                (error.response.data as any).data.error
+              }}</span>
             </div>
             <button
               type="submit"

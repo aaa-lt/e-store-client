@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import type { AxiosError } from 'axios'
+import axios, { type AxiosError } from 'axios'
 const authStore = useAuthStore()
 
 const username = ref('')
@@ -64,7 +64,7 @@ const login = async () => {
             <div v-if="error" class="text-sm font-medium text-red-500">
               <span v-if="error.response?.status === 401">Invalid username or password</span>
               <ul v-if="error.response?.status === 400">
-                <li v-for="error in error.response?.data.details" :key="error">
+                <li v-for="error in (error.response.data as any).details" :key="error">
                   {{ error.message }}
                 </li>
               </ul>

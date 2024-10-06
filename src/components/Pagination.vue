@@ -10,6 +10,7 @@ const pagination = inject<{
   paginationMeta: PaginationMeta
   paginationNextPage: () => void
   paginationPreviousPage: () => void
+  paginationSetLimit: (limit: number) => void
 }>('pagination')
 
 if (!pagination) {

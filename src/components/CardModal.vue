@@ -60,14 +60,11 @@ const emit = defineEmits(['close-modal', 'onClickAdd'])
                   <div
                     class="aspect-h-3 aspect-w-2 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-5"
                   >
-                    <!-- <img
-                      :src="product.imageSrc"
-                      :alt="product.imageAlt"
+                    <img
+                      :src="`http://localhost:3000/${product.image_url}`"
+                      :alt="product.name"
                       class="object-cover object-center"
-                    /> -->
-                    <div class="h-full w-full object-cover object-center group-hover:opacity-75">
-                      <div class="w-full h-96" :style="{ backgroundColor: product.color }"></div>
-                    </div>
+                    />
                   </div>
                   <div class="sm:col-span-8 lg:col-span-7 w-full h-full flex flex-col">
                     <h2 class="text-2xl font-bold text-gray-900 sm:pr-12">{{ product.name }}</h2>

@@ -4,17 +4,17 @@ import { inject, ref, watch } from 'vue'
 import { debounce } from 'lodash'
 
 const filters = inject('filters') as Filters
-const minPrice = ref<number | null>(null)
-const maxPrice = ref<number | null>(null)
-const categoryInput = ref<string | null>(null)
-const supplierInput = ref<string | null>(null)
-const dateInput = ref<string | null>(null)
+const minPrice = ref()
+const maxPrice = ref()
+const categoryInput = ref()
+const supplierInput = ref()
+const dateInput = ref()
 
 watch(
   [minPrice, maxPrice, dateInput, categoryInput, supplierInput],
   debounce(() => {
-    filters.minPrice = minPrice.value ? parseInt(minPrice.value) : null
-    filters.maxPrice = maxPrice.value ? parseInt(maxPrice.value) : null
+    filters.minPrice = minPrice.value ? parseInt(minPrice.value as unknown as string) : undefined
+    filters.maxPrice = maxPrice.value ? parseInt(maxPrice.value as unknown as string) : undefined
     filters.creationDate = dateInput.value ?? ''
     filters.categoryName = categoryInput.value ?? ''
     filters.supplierName = supplierInput.value ?? ''

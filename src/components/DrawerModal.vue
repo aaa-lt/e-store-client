@@ -4,7 +4,7 @@ import { CheckIcon } from '@heroicons/vue/24/outline'
 
 withDefaults(
   defineProps<{
-    open: Boolean
+    open: boolean
     orderId: number | null
   }>(),
   {

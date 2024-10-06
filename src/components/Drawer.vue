@@ -122,12 +122,7 @@ const createOrder = async () => {
                         <ul v-auto-animate role="list" class="-my-6 divide-y divide-gray-200">
                           <li v-for="item in items" :key="item.id" class="flex py-6">
                             <CartItem
-                              :product-name="item.name"
-                              :product-description="item.description"
-                              :product-price="item.price"
-                              :product-quantity="item.quantity"
-                              :user-quantity="item.userQuantity"
-                              :bgColor="item.color"
+                              :product="item"
                               :remove-from-cart="() => emit('removeFromCart', item)"
                               :updateQuantity="
                                 (quantity: Number) => emit('updateUserQuantity', item, quantity)

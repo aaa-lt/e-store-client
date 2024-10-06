@@ -2,17 +2,15 @@
 import { ref, type PropType, watch } from 'vue'
 
 const props = defineProps({
-  productName: String,
-  productDescription: String,
-  productPrice: Number,
-  productQuantity: Number,
-  userQuantity: Number,
-  bgColor: String,
+  product: {
+    type: Object,
+    required: true
+  },
   removeFromCart: { type: Function as PropType<(...args: any[]) => any>, required: true },
   updateQuantity: { type: Function, required: true }
 })
 
-const quantity = ref(props.userQuantity)
+const quantity = ref(props.product.userQuantity)
 
 watch(
   quantity,
@@ -20,11 +18,11 @@ watch(
     if (quantity.value < 1) {
       quantity.value = 1
     }
-    if (quantity.value > props.productQuantity) {
-      quantity.value = props.productQuantity
+    if (quantity.value > props.product.quantity) {
+      quantity.value = props.product.quantity
     }
     if (isNaN(Number(quantity.value))) {
-      quantity.value = props.userQuantity
+      quantity.value = props.product.userQuantity
     }
     props.updateQuantity(Number(quantity.value))
   },
@@ -34,23 +32,26 @@ watch(
 
 <template>
   <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-    <div class="w-full h-60" :style="{ backgroundColor: bgColor }"></div>
+    <img
+      :src="`http://localhost:3000/${product.image_url}`"
+      :alt="product.name"
+      class="h-full w-full object-cover object-center"
+    />
   </div>
 
   <div class="ml-4 flex flex-1 flex-col">
     <div>
       <div class="flex justify-between text-base font-medium text-gray-900">
         <h3>
-          <span>{{ productName }}</span>
+          <span>{{ product.name }}</span>
         </h3>
         <div class="text-right">
-          <p class="ml-4">${{ productPrice * userQuantity }}</p>
-          <p v-if="userQuantity > 1" class="mt-1 text-sm font-light text-slate-500">
-            ${{ productPrice }}/piece
+          <p class="ml-4">${{ product.price * product.userQuantity }}</p>
+          <p v-if="product.userQuantity > 1" class="mt-1 text-sm font-light text-slate-500">
+            ${{ product.price }}/piece
           </p>
         </div>
       </div>
-      <!-- <p class="mt-1 text-sm text-gray-500">Quantity:</p> -->
     </div>
     <div class="flex flex-1 items-end justify-between text-sm mt-1">
       <div class="flex items-center">
@@ -82,7 +83,7 @@ watch(
           data-input-counter
           class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0"
           min="1"
-          :max="productQuantity"
+          :max="product.quantity"
           v-model="quantity"
           required
         />

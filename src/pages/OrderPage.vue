@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import OrderCard from '@/components/OrderCard.vue'
 import type { Order } from '@/types/Order'
 import api from '../services/axiosInstance'
 import { onMounted, reactive, onBeforeMount, computed } from 'vue'
@@ -9,7 +8,23 @@ import OrderStatus from '@/components/OrderStatus.vue'
 const route = useRoute()
 const router = useRouter()
 
-const order = reactive<Order>({})
+const order = reactive<Order>({
+  id: 0,
+  user_id: 0,
+  status: '',
+  order_date: '',
+  Products: [
+    {
+      id: 0,
+      name: '',
+      price: 0,
+      image_url: '',
+      OrderProduct: {
+        quantity: 0
+      }
+    }
+  ]
+})
 
 const totalPrice = computed(() =>
   order.Products?.reduce(
@@ -53,9 +68,9 @@ onBeforeMount(() => {
               <div class="flex items-center gap-6">
                 <a href="#" class="h-14 w-14 shrink-0">
                   <img
-                    class="h-full w-full"
-                    src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg"
-                    alt="imac image"
+                    class="h-full w-full rounded"
+                    :src="`http://localhost:3000/${product.image_url}`"
+                    :alt="product.name"
                   />
                 </a>
 

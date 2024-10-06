@@ -7,6 +7,9 @@ import axios from 'axios'
 import type { Product, ProductResponse } from '../types/Product'
 import type { Filters, PaginationMeta } from '../types/Search'
 
+const publicEnvVar = import.meta.env.VITE_SERVER_HOST
+console.log(publicEnvVar)
+
 const { cart, updateCart }: { cart: Ref<Product[]>; updateCart: (item: Product) => void } = inject(
   'cart'
 ) ?? { cart: ref<Product[]>([]), updateCart: () => {} }
