@@ -1,20 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { z } from 'zod'
+import useValidation from '../services/useValidation'
 import axios, { type AxiosError } from 'axios'
+
 const authStore = useAuthStore()
 
-const username = ref('')
-const password = ref('')
-const error = ref<AxiosError | undefined>()
+const validationSchema = z.object({
+  username: z.string().min(3, { message: 'Username must be at least 3 characters long' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long' })
+})
+
+const form = reactive({
+  username: '',
+  password: ''
+})
+
+const { validate, getError } = useValidation(validationSchema, form)
+const responseError = ref<AxiosError | undefined>()
 
 const login = async () => {
   try {
-    await authStore.login(username.value, password.value)
-    error.value = undefined
+    if (!(await validate()).value) {
+      await authStore.login(form.username, form.password)
+      responseError.value = undefined
+    }
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      error.value = err
+      responseError.value = err
     } else {
       console.error('An unexpected error occurred:', err)
     }
@@ -36,38 +50,44 @@ const login = async () => {
                 >Username</label
               >
               <input
-                v-model="username"
-                autocomplete="username"
+                v-model="form.username"
                 type="text"
                 name="username"
                 id="username"
+                autocomplete="username"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5"
+                :class="
+                  getError('username') ||
+                  (responseError?.response?.data as any)?.source === 'username'
+                    ? 'border-red-500'
+                    : ''
+                "
                 placeholder="username"
                 required
               />
+              <div class="text-sm mt-2 font-medium text-red-500">{{ getError('username') }}</div>
             </div>
             <div>
               <label for="password" class="block mb-2 text-sm font-medium text-gray-900"
                 >Password</label
               >
               <input
-                v-model="password"
-                autocomplete="current-password"
+                v-model="form.password"
                 type="password"
                 name="password"
                 id="password"
+                autocomplete="current-password"
                 placeholder="••••••••"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5 d"
+                :class="getError('password') ? 'border-red-500' : ''"
                 required
               />
+              <div class="text-sm mt-2 font-medium text-red-500">{{ getError('password') }}</div>
             </div>
-            <div v-if="error" class="text-sm font-medium text-red-500">
-              <span v-if="error.response?.status === 401">Invalid username or password</span>
-              <ul v-if="error.response?.status === 400">
-                <li v-for="error in (error.response.data as any).details" :key="error">
-                  {{ error.message }}
-                </li>
-              </ul>
+            <div v-if="responseError" class="text-sm font-medium text-red-500">
+              <span v-if="responseError.response?.status === 401"
+                >Invalid username or password</span
+              >
             </div>
             <button
               type="submit"

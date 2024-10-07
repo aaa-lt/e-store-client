@@ -1,22 +1,36 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { z } from 'zod'
+import useValidation from '../services/useValidation'
 import axios, { type AxiosError } from 'axios'
 
 const authStore = useAuthStore()
 
-const username = ref('')
-const email = ref('')
-const password = ref('')
-const error = ref<AxiosError | undefined>()
+const validationSchema = z.object({
+  username: z.string().min(3, { message: 'Username must be at least 3 characters long' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
+  email: z.string().email({ message: 'Email is not valid' })
+})
+
+const form = reactive({
+  username: '',
+  email: '',
+  password: ''
+})
+
+const { validate, getError } = useValidation(validationSchema, form)
+const responseError = ref<AxiosError | undefined>()
 
 const register = async () => {
   try {
-    await authStore.register(username.value, email.value, password.value)
-    error.value = undefined
+    if (!(await validate()).value) {
+      await authStore.register(form.username, form.email, form.password)
+      responseError.value = undefined
+    }
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      error.value = err
+      responseError.value = err
     } else {
       console.error('An unexpected error occurred:', err)
     }
@@ -31,63 +45,82 @@ const register = async () => {
           <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
             Create an account
           </h1>
-          <div class="space-y-4 md:space-y-6">
+          <div class="space-y-4">
             <div>
-              <label for="email" class="block mb-2 text-sm font-medium text-gray-900"
+              <label for="username" class="block mb-2 text-sm font-medium text-gray-900"
                 >Username</label
               >
               <input
-                v-model="username"
+                v-model="form.username"
                 type="text"
                 name="username"
                 id="username"
                 autocomplete="username"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5"
+                :class="
+                  getError('username') ||
+                  (responseError?.response?.data as any)?.source === 'username'
+                    ? 'border-red-500'
+                    : ''
+                "
                 placeholder="username"
                 required
               />
+              <div class="text-sm mt-2 font-medium text-red-500">{{ getError('username') }}</div>
+              <div
+                v-if="(responseError?.response?.data as any)?.source === 'username'"
+                class="text-sm mt-2 font-medium text-red-500"
+              >
+                {{ (responseError?.response?.data as any)?.error }}
+              </div>
             </div>
+
             <div>
               <label for="email" class="block mb-2 text-sm font-medium text-gray-900"
                 >Your email</label
               >
               <input
-                v-model="email"
+                v-model="form.email"
                 type="email"
                 name="email"
                 id="email"
                 autocomplete="email"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5"
+                :class="
+                  getError('email') || (responseError?.response?.data as any)?.source === 'email'
+                    ? 'border-red-500'
+                    : ''
+                "
                 placeholder="name@company.com"
                 required
               />
+              <div class="text-sm mt-2 font-medium text-red-500">{{ getError('email') }}</div>
+              <div
+                v-if="(responseError?.response?.data as any)?.source === 'email'"
+                class="text-sm mt-2 font-medium text-red-500"
+              >
+                {{ (responseError?.response?.data as any)?.error }}
+              </div>
             </div>
+
             <div>
               <label for="password" class="block mb-2 text-sm font-medium text-gray-900"
                 >Password</label
               >
               <input
-                v-model="password"
+                v-model="form.password"
                 type="password"
                 name="password"
                 id="password"
                 autocomplete="current-password"
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5 d"
+                :class="getError('password') ? 'border-red-500' : ''"
                 required
               />
+              <div class="text-sm mt-2 font-medium text-red-500">{{ getError('password') }}</div>
             </div>
-            <div v-if="error" class="text-sm font-medium text-red-500">
-              <span v-if="error.response?.status === 401">Invalid username or password</span>
-              <ul v-if="error.response?.status === 400">
-                <li v-for="error in (error.response.data as any).details" :key="error">
-                  {{ error.message }}
-                </li>
-              </ul>
-              <span v-if="error.response?.status === 409">{{
-                (error.response.data as any).data.error
-              }}</span>
-            </div>
+
             <button
               type="submit"
               class="w-full text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"

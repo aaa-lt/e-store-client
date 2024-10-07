@@ -19,6 +19,11 @@ const closeModal = () => (modalOpen.value = false)
       class="absolute right-1 top-1 inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10"
       >In cart</span
     >
+    <span
+      v-if="product.quantity === 0"
+      class="absolute right-1 top-1 inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-blue-700/10"
+      >Sold out</span
+    >
     <div
       class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7"
     >

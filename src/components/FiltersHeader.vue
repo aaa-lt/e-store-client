@@ -3,7 +3,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronDownIcon, FunnelIcon } from '@heroicons/vue/20/solid'
 import { inject, ref, watch } from 'vue'
 import type { Filters, SortOption } from '@/types/Search'
-import { debounce } from 'lodash'
+import { debounce } from '../utils/debounce'
 
 defineEmits(['mobileFiltersToggle'])
 
@@ -33,7 +33,7 @@ watch(
 </script>
 <template>
   <div
-    class="flex sm:items-baseline flex-col sm:flex-row gap-4 justify-center items-center justify-between border-b border-gray-200 py-6"
+    class="flex sm:items-baseline flex-col sm:flex-row gap-4 items-center justify-between border-b border-gray-200 py-6"
   >
     <h1 class="text-4xl font-bold tracking-tight text-gray-900">Shop</h1>
 
@@ -83,7 +83,7 @@ watch(
 
         <button
           type="button"
-          class="sm:-m-2 sm:ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
+          class="sm:-m-2 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
           @click="
             () => {
               $emit('mobileFiltersToggle', true)

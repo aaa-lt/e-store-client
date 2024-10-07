@@ -90,9 +90,6 @@ watch(
 )
 
 watch(cart, async () => {
-  // products.value = products.value.map((product) => {
-  //   return { ...product, isAdded: false }
-  // })
   await fetchItems()
 })
 

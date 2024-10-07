@@ -94,6 +94,7 @@ const emit = defineEmits(['close-modal', 'onClickAdd'])
                       </div>
                       <div>
                         <button
+                          v-if="product.quantity > 0"
                           @click="emit('onClickAdd')"
                           :disabled="product.quantity === 0"
                           class="mt-6 flex mw-6 items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
