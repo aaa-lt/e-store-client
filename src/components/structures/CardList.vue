@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Card from './Card.vue'
+import Card from '../molecules/ProductCard.vue'
 import type { PropType } from 'vue'
 import type { Product } from '@/types/Product'
-import Pagination from './Pagination.vue'
+import Pagination from './PaginationFooter.vue'
 
 defineProps({
   products: {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import PageHeader from './components/PageHeader.vue'
-import Drawer from './components/Drawer.vue'
+import PageHeader from './components/templates/PageHeader.vue'
+import Drawer from './components/templates/Drawer.vue'
 import { computed, provide, ref, watch, onMounted } from 'vue'
 import type { Product } from './types/Product'
 

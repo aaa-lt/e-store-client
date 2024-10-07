@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import FiltersSection from '@/components/FiltersSection.vue'
-import CardList from '@/components/CardList.vue'
+import FiltersSection from '@/components/templates/FilteredSection.vue'
+import CardList from '@/components/structures/CardList.vue'
 import { inject, onMounted, provide, reactive, ref, watch, type Ref } from 'vue'
 import axios from 'axios'
 import type { Product, ProductResponse } from '../types/Product'

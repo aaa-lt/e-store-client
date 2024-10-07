@@ -3,7 +3,7 @@ import type { Order } from '@/types/Order'
 import api from '../services/axiosInstance'
 import { onMounted, reactive, onBeforeMount, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import OrderStatus from '@/components/OrderStatus.vue'
+import OrderStatus from '@/components/atoms/OrderStatus.vue'
 
 const route = useRoute()
 const router = useRouter()

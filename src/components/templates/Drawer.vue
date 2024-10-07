@@ -3,11 +3,11 @@
 import { type PropType, computed, ref } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import CartItem from './CartItem.vue'
+import CartItem from '../structures/CartItem.vue'
 import type { Product } from '@/types/Product'
-import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from '../../stores/auth'
 import api from '@/services/axiosInstance'
-import DrawerModal from './DrawerModal.vue'
+import DrawerModal from '../molecules/DrawerModal.vue'
 
 const authStore = useAuthStore()
 const username = computed(() => authStore.user)
@@ -135,8 +135,8 @@ const createOrder = async () => {
                   </div>
                   <div v-if="totalPrice !== 0" class="border-t border-gray-200 px-4 py-6 sm:px-6">
                     <div class="flex justify-between text-base font-medium text-gray-900">
-                      <p>Subtotal</p>
-                      <p>${{ totalPrice }}</p>
+                      <p>Total</p>
+                      <p>${{ totalPrice?.toFixed(2) }}</p>
                     </div>
                     <div class="mt-6">
                       <button

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import OrderCard from '@/components/OrderCard.vue'
+import OrderCard from '@/components/molecules/OrderCard.vue'
 import type { Order } from '@/types/Order'
 import api from '../services/axiosInstance'
 import { onMounted, ref, provide, reactive, watch } from 'vue'
-import Pagination from '@/components/Pagination.vue'
+import Pagination from '@/components/structures/PaginationFooter.vue'
 import type { Filters, PaginationMeta } from '@/types/Search'
 import type { OrderResponse } from '@/types/Order'
 

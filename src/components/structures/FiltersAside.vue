@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Filters } from '@/types/Search'
 import { inject, ref, watch } from 'vue'
-import { debounce } from '../utils/debounce'
+import { debounce } from '../../utils/debounce'
 
 const filters = inject('filters') as Filters
 const minPrice = ref()

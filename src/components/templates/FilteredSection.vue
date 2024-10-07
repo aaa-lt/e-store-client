@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import FiltersHeader from './FiltersHeader.vue'
-import FiltersSubSection from './FiltersSubSection.vue'
+import FiltersHeader from '../structures/FiltersHeader.vue'
+import FiltersAside from '../structures/FiltersAside.vue'
 
 const mobileFiltersOpen = ref(false)
 const mobileFiltersToggle = (isOpen: boolean) => (mobileFiltersOpen.value = isOpen)
@@ -53,7 +53,7 @@ const mobileFiltersToggle = (isOpen: boolean) => (mobileFiltersOpen.value = isOp
 
               <!-- Filters -->
               <div class="mt-4 border-t border-gray-200 px-4">
-                <FiltersSubSection />
+                <FiltersAside />
               </div>
             </DialogPanel>
           </TransitionChild>
@@ -68,7 +68,7 @@ const mobileFiltersToggle = (isOpen: boolean) => (mobileFiltersOpen.value = isOp
       <div class="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
         <!-- Filters -->
         <div class="hidden lg:block">
-          <FiltersSubSection />
+          <FiltersAside />
         </div>
 
         <!-- Product grid -->

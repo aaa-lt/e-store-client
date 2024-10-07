@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import { inject } from 'vue'
-import type { PaginationMeta } from '../types/Search'
+import type { PaginationMeta } from '../../types/Search'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
@@ -68,7 +68,7 @@ const topComputed = (limitValues.length * 36 + 25) * -1 + 'px'
           results
         </p>
       </div>
-      <div class="flex gap-4" v-if="paginationMeta.total_pages > 1">
+      <div class="flex gap-4" v-if="paginationMeta.total_items > 11">
         <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
           <a
             :disabled="paginationMeta.current_page === 1"

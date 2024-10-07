@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Order } from '@/types/Order'
-import OrderStatus from '@/components/OrderStatus.vue'
+import OrderStatus from '@/components/atoms/OrderStatus.vue'
 
 const props = defineProps<{ order: Order }>()
 
