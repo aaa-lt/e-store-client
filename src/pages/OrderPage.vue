@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Order } from '@/types/Order'
-import api from '../services/axiosInstance'
-import { onMounted, reactive, onBeforeMount, computed, watch } from 'vue'
+import { onMounted, reactive, onBeforeMount, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import OrderStatus from '@/components/atoms/OrderStatus.vue'
+import { getOrderById } from '@/services/fetchService'
 
 const route = useRoute()
 const router = useRouter()
@@ -34,10 +34,8 @@ const totalPrice = computed(() =>
 )
 const fetchItems = async () => {
   try {
-    const { data }: { data: Order[] } = await api.get(
-      'http://localhost:3000/orders/' + route.params.id
-    )
-    Object.assign(order, data)
+    const item = await getOrderById(Number(route.params.id))
+    Object.assign(order, item)
   } catch (error) {
     console.log(error)
   }

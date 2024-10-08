@@ -58,7 +58,11 @@ const topComputed = (limitValues.length * 36 + 25) * -1 + 'px'
           to
           {{ ' ' }}
           <span class="font-medium">{{
-            paginationMeta.total_items ? paginationMeta.current_page * paginationMeta.per_page : 0
+            paginationMeta.total_items
+              ? paginationMeta.total_pages > 1
+                ? paginationMeta.current_page * paginationMeta.per_page
+                : paginationMeta.total_items
+              : 0
           }}</span>
           {{ ' ' }}
           of

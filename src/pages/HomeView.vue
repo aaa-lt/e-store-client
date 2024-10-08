@@ -3,12 +3,9 @@
 import FiltersSection from '@/components/templates/FilteredSection.vue'
 import CardList from '@/components/structures/CardList.vue'
 import { inject, onMounted, provide, reactive, ref, watch, type Ref } from 'vue'
-import axios from 'axios'
-import type { Product, ProductResponse } from '../types/Product'
+import type { Product } from '../types/Product'
 import type { Filters, PaginationMeta } from '../types/Search'
-
-const publicEnvVar = import.meta.env.VITE_SERVER_HOST
-console.log(publicEnvVar)
+import { getProducts } from '@/services/fetchService'
 
 const { cart, updateCart }: { cart: Ref<Product[]>; updateCart: (item: Product) => void } = inject(
   'cart'
@@ -42,7 +39,7 @@ const paginationSetLimit = (limit: number) => {
 
 const fetchItems = async () => {
   try {
-    const params: Filters = {
+    const { items, meta } = await getProducts({
       page: filters.page,
       limit: filters.limit,
       ...(filters.sortBy && { sortBy: filters.sortBy }),
@@ -52,13 +49,9 @@ const fetchItems = async () => {
       ...(filters.minPrice && { minPrice: filters.minPrice }),
       ...(filters.maxPrice && { maxPrice: filters.maxPrice }),
       ...(filters.creationDate && { creationDate: filters.creationDate })
-    }
-
-    const { data }: { data: ProductResponse } = await axios.get('http://localhost:3000/products', {
-      params
     })
-    products.value = data.items
-    paginationMeta.value = data.meta
+    products.value = items
+    paginationMeta.value = meta
 
     products.value = products.value.map((products) => ({
       ...products,

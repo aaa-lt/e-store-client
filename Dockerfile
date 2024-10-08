@@ -1,8 +1,14 @@
-FROM node:20.15.1
+FROM node:20-alpine AS build
 WORKDIR /app
-COPY package.json .
+COPY package.json package-lock.json ./
 RUN npm install
-COPY . ./
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine AS production
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=build /app/dist /app/dist
 ENV PORT=8000
 EXPOSE 8000
-CMD ["npm", "run", "dev"]
+CMD ["serve", "-s", "dist"]

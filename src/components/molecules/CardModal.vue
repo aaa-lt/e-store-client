@@ -79,16 +79,15 @@ const emit = defineEmits(['close-modal', 'onClickAdd'])
                         <p class="text-md text-gray-900 mb-4 border-b border-gray-200 pb-4">
                           {{ product.description }}
                         </p>
-                        <p class="text-gray-900">
-                          <span class="text-sm">Price: </span
-                          ><span class="text-xl text-black">${{ product.price }}</span>
+                        <p>
+                          <span class="text-2xl text-gray-900"
+                            >${{ product.price.toFixed(1) }}</span
+                          >
                         </p>
 
-                        <p class="text-gray-900 pt-2">
-                          <span v-if="product.quantity > 0" class="text-xl text-green-700"
-                            >In stock
-                          </span>
-                          <span v-else class="text-xl text-red-500">Out of stock </span>
+                        <p class="pt-2 text-2xl">
+                          <span v-if="product.quantity > 0" class="text-green-700">In stock </span>
+                          <span v-else class="text-red-700">Out of stock </span>
                           <span class="text-sm">({{ product.quantity }} left)</span>
                         </p>
                       </div>

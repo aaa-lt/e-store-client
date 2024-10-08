@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import OrderCard from '@/components/molecules/OrderCard.vue'
 import type { Order } from '@/types/Order'
-import api from '../services/axiosInstance'
 import { onMounted, ref, provide, reactive, watch } from 'vue'
 import Pagination from '@/components/structures/PaginationFooter.vue'
 import type { Filters, PaginationMeta } from '@/types/Search'
-import type { OrderResponse } from '@/types/Order'
+import { getOrders } from '@/services/fetchService'
 
 const orders = ref<Order[]>([])
 
@@ -36,13 +35,10 @@ const paginationSetLimit = (limit: number) => {
 
 const fetchItems = async () => {
   try {
-    const params = { page: filters.page, limit: filters.limit }
-    const { data }: { data: OrderResponse } = await api.get('http://localhost:3000/orders', {
-      params
-    })
+    const { items, meta } = await getOrders({ page: filters.page, limit: filters.limit })
 
-    orders.value = data.items
-    paginationMeta.value = data.meta
+    orders.value = items
+    paginationMeta.value = meta
   } catch (error) {
     console.log(error)
   }
