@@ -2,8 +2,8 @@
 import { type ZodTypeAny, z } from 'zod'
 import { ref, toValue, type MaybeRefOrGetter } from 'vue'
 
-export default <Z extends ZodTypeAny>(
-  schema: Z,
+export default <T extends ZodTypeAny>(
+  schema: T,
   data: MaybeRefOrGetter<Record<string, unknown>>
 ) => {
   const errors = ref<Record<string, z.ZodIssue[]> | null>(null)
@@ -30,7 +30,7 @@ export default <Z extends ZodTypeAny>(
     return current?.[0]?.message
   }
 
-  const groupByPath = <Z>(arr: Z[], key: keyof Z): Record<string, Z[]> => {
+  const groupByPath = <T>(arr: T[], key: keyof T): Record<string, T[]> => {
     return arr.reduce(
       (acc, obj) => {
         const path = (obj[key] as unknown as string[]).join('.')
@@ -40,7 +40,7 @@ export default <Z extends ZodTypeAny>(
         acc[path].push(obj)
         return acc
       },
-      {} as Record<string, Z[]>
+      {} as Record<string, T[]>
     )
   }
 

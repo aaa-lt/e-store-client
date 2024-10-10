@@ -1,23 +1,25 @@
 <script setup lang="ts">
 import type { Filters } from '@/types/Search'
-import { inject, ref, watch } from 'vue'
+import { inject, reactive, ref, watch } from 'vue'
 import { debounce } from '../../utils/debounce'
 
 const filters = inject('filters') as Filters
-const minPrice = ref()
-const maxPrice = ref()
-const categoryInput = ref()
-const supplierInput = ref()
-const dateInput = ref()
+const inputs = reactive({
+  minPrice: '',
+  maxPrice: '',
+  creationDate: '',
+  categoryName: '',
+  supplierName: ''
+})
 
 watch(
-  [minPrice, maxPrice, dateInput, categoryInput, supplierInput],
+  inputs,
   debounce(() => {
-    filters.minPrice = minPrice.value ? parseInt(minPrice.value as unknown as string) : undefined
-    filters.maxPrice = maxPrice.value ? parseInt(maxPrice.value as unknown as string) : undefined
-    filters.creationDate = dateInput.value ?? ''
-    filters.categoryName = categoryInput.value ?? ''
-    filters.supplierName = supplierInput.value ?? ''
+    filters.minPrice = inputs.minPrice ? parseInt(inputs.minPrice as unknown as string) : undefined
+    filters.maxPrice = inputs.maxPrice ? parseInt(inputs.maxPrice as unknown as string) : undefined
+    filters.creationDate = inputs.creationDate ?? ''
+    filters.categoryName = inputs.categoryName ?? ''
+    filters.supplierName = inputs.supplierName ?? ''
   }, 300),
   { deep: true }
 )
@@ -31,7 +33,7 @@ watch(
         type="text"
         name="min"
         placeholder="From"
-        v-model="minPrice"
+        v-model="inputs.minPrice"
         autocomplete="off"
       />
       <input
@@ -39,7 +41,7 @@ watch(
         type="text"
         name="max"
         placeholder="To"
-        v-model="maxPrice"
+        v-model="inputs.maxPrice"
         autocomplete="off"
       />
     </div>
@@ -52,7 +54,7 @@ watch(
         type="date"
         name="creation_date"
         id="creation_date"
-        v-model="dateInput"
+        v-model="inputs.creationDate"
       />
     </div>
   </div>
@@ -65,7 +67,7 @@ watch(
         name="category_name"
         id="category_name"
         placeholder="Category"
-        v-model="categoryInput"
+        v-model="inputs.categoryName"
         autocomplete="off"
       />
     </div>
@@ -79,7 +81,7 @@ watch(
         name="supplier_name"
         id="=supplier_name"
         placeholder="Supplier"
-        v-model="supplierInput"
+        v-model="inputs.supplierName"
         autocomplete="off"
       />
     </div>

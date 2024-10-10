@@ -12,6 +12,16 @@ const validationSchema = z.object({
   password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
   email: z.string().email({ message: 'Email is not valid' })
 })
+// TODO Add confirm password
+// .superRefine((data, ctx) => {
+//   if (data.password !== data.confirmPassword) {
+//     ctx.addIssue({
+//       code: z.ZodIssueCode.custom,
+//       message: 'Passwords do not match',
+//       path: ['confirmPassword']
+//     })
+//   }
+// })
 
 const form = reactive({
   username: '',

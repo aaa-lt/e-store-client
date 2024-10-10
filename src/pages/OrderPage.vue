@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { Order } from '@/types/Order'
-import { onMounted, reactive, onBeforeMount, computed } from 'vue'
+import { onMounted, reactive, onBeforeMount, computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import OrderStatus from '@/components/atoms/OrderStatus.vue'
 import { getOrderById } from '@/services/fetchService'
+import { getImageByName } from '@/services/fetchService'
 
 const route = useRoute()
 const router = useRouter()
@@ -32,6 +33,8 @@ const totalPrice = computed(() =>
     0
   )
 )
+const isLoaded = ref(false)
+
 const fetchItems = async () => {
   try {
     const item = await getOrderById(Number(route.params.id))
@@ -43,6 +46,10 @@ const fetchItems = async () => {
 
 onMounted(async () => {
   await fetchItems()
+
+  const img = new Image()
+  img.onload = () => (isLoaded.value = true)
+  img.src = getImageByName(order.Products[0].image_url, 'low')
 })
 
 onBeforeMount(() => {
@@ -64,13 +71,13 @@ onBeforeMount(() => {
           <div v-for="product in order.Products" :key="product.id">
             <div class="space-y-4 p-6">
               <div class="flex items-center gap-6">
-                <a href="#" class="h-14 w-14 shrink-0">
+                <div class="h-14 w-14 shrink-0">
                   <img
                     class="h-full w-full rounded"
-                    :src="`http://localhost:3000/${product.image_url}`"
+                    :src="getImageByName(product.image_url, 'low')"
                     :alt="product.name"
                   />
-                </a>
+                </div>
 
                 <span class="min-w-0 flex-1 font-medium text-gray-900 hover:underline">
                   {{ product.name }}

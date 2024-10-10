@@ -3,6 +3,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
-ENV PORT=8000
-EXPOSE 8000
+ENV VITE_PORT=8000
+EXPOSE $VITE_PORT
 CMD ["npm", "run", "dev"]

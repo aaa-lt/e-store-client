@@ -9,6 +9,6 @@ FROM node:20-alpine AS production
 WORKDIR /app
 RUN npm install -g serve
 COPY --from=build /app/dist /app/dist
-ENV PORT=8000
-EXPOSE 8000
+ENV VITE_PORT=8000
+EXPOSE $VITE_PORT
 CMD ["serve", "-s", "dist"]

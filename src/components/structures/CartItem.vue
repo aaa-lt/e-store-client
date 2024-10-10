@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, type PropType, watch } from 'vue'
+import { ref, type PropType, watch, onMounted } from 'vue'
+import { getImageByName } from '@/services/fetchService'
 
 const props = defineProps({
   product: {
@@ -11,6 +12,7 @@ const props = defineProps({
 })
 
 const quantity = ref(props.product.userQuantity)
+const isLoaded = ref(false)
 
 watch(
   quantity,
@@ -28,12 +30,18 @@ watch(
   },
   { deep: true }
 )
+
+onMounted(() => {
+  const img = new Image()
+  img.onload = () => (isLoaded.value = true)
+  img.src = getImageByName(props.product.image_url, 'low')
+})
 </script>
 
 <template>
   <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
     <img
-      :src="`http://localhost:3000/${product.image_url}`"
+      :src="getImageByName(props.product.image_url, 'low')"
       :alt="product.name"
       class="h-full w-full object-cover object-center"
     />
