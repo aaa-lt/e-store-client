@@ -1,4 +1,5 @@
 FROM node:20-alpine AS build
+ARG VITE_API_BASE_URL
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
