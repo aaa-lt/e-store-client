@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import OrderStatus from '@/components/atoms/OrderStatus.vue'
 import { getOrderById } from '@/services/fetchService'
 import { getImageByName } from '@/services/fetchService'
+import ProductImage from '@/components/atoms/ProductImage.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -72,10 +73,10 @@ onBeforeMount(() => {
             <div class="space-y-4 p-6">
               <div class="flex items-center gap-6">
                 <div class="h-14 w-14 shrink-0">
-                  <img
-                    class="h-full w-full rounded"
-                    :src="getImageByName(product.image_url, 'low')"
-                    :alt="product.name"
+                  <ProductImage
+                    :imageUrl="product.image_url"
+                    :imageAlt="product.name"
+                    imageSize="low"
                   />
                 </div>
 

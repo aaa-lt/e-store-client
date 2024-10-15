@@ -4,7 +4,7 @@ import { ChevronDownIcon, FunnelIcon } from '@heroicons/vue/20/solid'
 import { ref } from 'vue'
 import type { SortOption } from '@/types/Search'
 
-const emit = defineEmits(['changeSearchFilter', 'mobileFiltersToggle'])
+const emit = defineEmits(['changeSort', 'mobileFiltersToggle'])
 
 const sortOptions = ref<SortOption[]>([
   { name: 'Default', value: '', current: true },
@@ -17,7 +17,7 @@ const onChageSort = (selectedOption: SortOption) => {
   sortOptions.value.forEach((option) => {
     option.current = option.name === selectedOption.name
   })
-  emit('changeSearchFilter', selectedOption.value)
+  emit('changeSort', selectedOption.value)
 }
 </script>
 

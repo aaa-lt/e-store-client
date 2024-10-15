@@ -118,7 +118,7 @@ const createOrder = async () => {
                           <span aria-hidden="true"> &rarr;</span>
                         </button>
                       </div>
-                      <div class="flow-root">
+                      <div v-else class="flow-root w-full">
                         <ul v-auto-animate role="list" class="-my-6 divide-y divide-gray-200">
                           <li v-for="item in items" :key="item.id" class="flex py-6">
                             <CartItem

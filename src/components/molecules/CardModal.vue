@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { getImageByName } from '@/services/fetchService'
+import ProductImage from '../atoms/ProductImage.vue'
 
 const props = defineProps({
   open: Boolean,
@@ -12,13 +12,6 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['close-modal', 'onClickAdd'])
-const isLoaded = ref(false)
-
-onMounted(() => {
-  const img = new Image()
-  img.onload = () => (isLoaded.value = true)
-  img.src = getImageByName(props.product.image_url, 'full')
-})
 </script>
 <template>
   <TransitionRoot as="template" :show="open">
@@ -69,24 +62,11 @@ onMounted(() => {
                   <div
                     class="aspect-h-3 aspect-w-2 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-5"
                   >
-                    <img
-                      v-if="isLoaded"
-                      :src="getImageByName(product.image_url, 'full')"
-                      :alt="product.name"
-                      class="object-cover object-center"
+                    <ProductImage
+                      :imageUrl="product.image_url"
+                      :imageAlt="product.name"
+                      imageSize="full"
                     />
-                    <img
-                      v-else
-                      :src="getImageByName(props.product.image_url, 'potato')"
-                      :alt="product.name"
-                      class="h-full w-full object-cover object-center blur-md animate-pulse aspect-square bg-slate-200 group-hover:opacity-75"
-                    />
-                    <!-- <div
-                      v-else
-                      class="h-full w-full object-cover object-center bg-slate-200 animate-pulse"
-                    >
-                      <div class="aspect-square"></div>
-                    </div> -->
                   </div>
                   <div class="sm:col-span-8 lg:col-span-7 w-full h-full flex flex-col">
                     <h2 class="text-2xl font-bold text-gray-900 sm:pr-12">{{ product.name }}</h2>

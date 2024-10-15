@@ -17,3 +17,5 @@ export interface ProductResponse {
   meta: PaginationMeta
   items: Product[]
 }
+
+export type ImageSizes = 'full' | 'middle' | 'low' | 'potato'

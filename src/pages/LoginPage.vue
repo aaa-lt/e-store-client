@@ -20,8 +20,11 @@ const form = reactive({
 const { validate, getError } = useValidation(validationSchema, form)
 const responseError = ref<AxiosError | undefined>()
 
+const isButtonDisabled = ref(false)
+
 const login = async () => {
   try {
+    isButtonDisabled.value = true
     if (!(await validate()).value) {
       await authStore.login(form.username, form.password)
       responseError.value = undefined
@@ -32,6 +35,8 @@ const login = async () => {
     } else {
       console.error('An unexpected error occurred:', err)
     }
+  } finally {
+    isButtonDisabled.value = false
   }
 }
 </script>
@@ -90,8 +95,9 @@ const login = async () => {
               >
             </div>
             <button
+              :disabled="isButtonDisabled"
               type="submit"
-              class="w-full text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+              class="w-full text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-slate-400 disabled:cursor-not-allowed"
             >
               Log In
             </button>

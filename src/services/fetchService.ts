@@ -2,6 +2,7 @@ import type { ProductResponse } from '@/types/Product'
 import type { OrderResponse, Order } from '@/types/Order'
 import type { Filters } from '@/types/Search'
 import api, { baseUrl } from '@/services/axiosInstance'
+import type { ImageSizes } from '@/types/Product'
 
 const getProducts = async (params: Filters): Promise<ProductResponse> => {
   const { data } = await api.get<ProductResponse>(`${baseUrl}/products`, {
@@ -25,7 +26,7 @@ const getOrderById = async (id: number): Promise<Order> => {
   return data
 }
 
-const getImageByName = (name: string, quality: 'full' | 'middle' | 'low' | 'potato') => {
+const getImageByName = (name: string, quality: ImageSizes) => {
   return `${baseUrl}/images/${quality}/${name}`
 }
 

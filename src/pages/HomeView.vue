@@ -2,40 +2,19 @@
 <script setup lang="ts">
 import FiltersSection from '@/components/templates/FilteredSection.vue'
 import CardList from '@/components/structures/CardList.vue'
-import { inject, onMounted, provide, reactive, ref, watch, type Ref } from 'vue'
+import { inject, onMounted, provide, ref, watch, type Ref } from 'vue'
 import type { Product } from '../types/Product'
-import type { Filters, PaginationMeta } from '../types/Search'
 import { getProducts } from '@/services/fetchService'
+import { usePagination } from '@/services/usePagination'
+
+const { paginationMeta, filters, paginationNextPage, paginationPreviousPage, paginationSetLimit } =
+  usePagination()
 
 const { cart, updateCart }: { cart: Ref<Product[]>; updateCart: (item: Product) => void } = inject(
   'cart'
 ) ?? { cart: ref<Product[]>([]), updateCart: () => {} }
 
 const products = ref<Product[]>([])
-const paginationMeta = ref<PaginationMeta>({
-  total_items: 0,
-  total_pages: 0,
-  current_page: 0,
-  per_page: 0,
-  remaining_items: 0
-})
-const filters = reactive<Filters>({ page: 1, limit: 10 })
-
-const paginationNextPage = () => {
-  if (filters.page < paginationMeta.value.total_pages) {
-    filters.page++
-  }
-}
-
-const paginationPreviousPage = () => {
-  if (filters.page > 1) {
-    filters.page--
-  }
-}
-
-const paginationSetLimit = (limit: number) => {
-  filters.limit = limit
-}
 
 const fetchItems = async () => {
   try {
