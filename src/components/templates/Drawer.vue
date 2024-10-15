@@ -6,7 +6,7 @@ import { XMarkIcon } from '@heroicons/vue/24/outline'
 import CartItem from '../structures/CartItem.vue'
 import type { Product } from '@/types/Product'
 import { useAuthStore } from '../../stores/auth'
-import api from '@/services/axiosInstance'
+import api, { baseUrl } from '@/services/axiosInstance'
 import DrawerModal from '../molecules/DrawerModal.vue'
 
 const authStore = useAuthStore()
@@ -38,7 +38,7 @@ const createOrder = async () => {
   try {
     isCreatingOrder.value = true
 
-    const order = await api.post('http://localhost:3000/orders', {
+    const order = await api.post(`${baseUrl}/orders`, {
       products: props.cart.map((product) => ({
         ProductId: product.id,
         quantity: product.userQuantity

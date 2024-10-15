@@ -1,9 +1,7 @@
 import type { ProductResponse } from '@/types/Product'
 import type { OrderResponse, Order } from '@/types/Order'
 import type { Filters } from '@/types/Search'
-import api from '@/services/axiosInstance'
-
-const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
+import api, { baseUrl } from '@/services/axiosInstance'
 
 const getProducts = async (params: Filters): Promise<ProductResponse> => {
   const { data } = await api.get<ProductResponse>(`${baseUrl}/products`, {

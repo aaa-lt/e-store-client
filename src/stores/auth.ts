@@ -3,7 +3,7 @@ import axios from 'axios'
 import router from '../router'
 import type { AuthState } from '@/types/Auth'
 import Cookies from 'js-cookie'
-import api from '@/services/axiosInstance'
+import api, { baseUrl } from '@/services/axiosInstance'
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
@@ -21,7 +21,7 @@ export const useAuthStore = defineStore('auth', {
         this.accessToken = accessToken
         this.refreshToken = refreshToken
         this.isAuthenticated = true
-        const user = await api.get('http://localhost:3000/users/me')
+        const user = await api.get(`${baseUrl}/users/me`)
         this.user = user.data.username
       }
     },
@@ -34,7 +34,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async register(username: string, email: string, password: string) {
-      const response = await axios.post('http://localhost:3000/auth/register', {
+      const response = await axios.post(`${baseUrl}/auth/register`, {
         username,
         email,
         password
@@ -48,7 +48,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async login(username: string, password: string) {
-      const response = await axios.post('http://localhost:3000/auth/login', {
+      const response = await axios.post(`${baseUrl}/auth/login`, {
         username,
         password
       })
@@ -64,7 +64,7 @@ export const useAuthStore = defineStore('auth', {
         const refreshToken = Cookies.get('refresh')
         if (!refreshToken) throw new Error('No refresh token available')
 
-        const response = await axios.post('http://localhost:3000/auth/refresh', {
+        const response = await axios.post(`${baseUrl}/auth/refresh`, {
           refreshToken: `Bearer ${refreshToken}`
         })
 
