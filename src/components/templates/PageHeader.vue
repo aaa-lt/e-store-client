@@ -8,7 +8,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 
 const authStore = useAuthStore()
-const username = computed(() => authStore.user)
+const username = computed(() => authStore.user.friendly_name)
 
 const mobileMenuOpen = ref(false)
 
@@ -94,6 +94,18 @@ const emit = defineEmits(['open-drawer'])
                 class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               >
                 <div class="py-1">
+                  <MenuItem v-slot="{ active, close }">
+                    <RouterLink to="/profile">
+                      <span
+                        @click="close"
+                        :class="[
+                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          'block px-4 py-2 text-sm cursor-pointer'
+                        ]"
+                        >Edit profile</span
+                      >
+                    </RouterLink>
+                  </MenuItem>
                   <MenuItem v-slot="{ active, close }">
                     <RouterLink to="/orders">
                       <span

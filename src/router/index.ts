@@ -6,6 +6,8 @@ import NotFound from '@/pages/NotFound.vue'
 import { useAuthStore } from '../stores/auth'
 import OrdersPage from '@/pages/OrdersPage.vue'
 import OrderPage from '@/pages/OrderPage.vue'
+import OAuthCallback from '@/pages/OAuthCallback.vue'
+import ProfilePage from '@/pages/ProfilePage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,11 +53,37 @@ const router = createRouter({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/oauth/callback',
+      name: 'OAuthCallback',
+      component: OAuthCallback,
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        const code = to.query.code
+
+        if (code) {
+          authStore
+            .handleOAuthCallback(code as string)
+            .then(() => next('/'))
+            .catch(() => next('/login'))
+        } else {
+          next('/login')
+        }
+      }
+    },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: ProfilePage,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')

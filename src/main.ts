@@ -11,9 +11,10 @@ const pinia = createPinia()
 const app = createApp(App)
 
 app.use(pinia)
-app.use(router)
 
 const authStore = useAuthStore()
-authStore.loadTokensFromCookies()
+await authStore.loadTokensFromCookies()
+
+app.use(router)
 
 app.use(autoAnimatePlugin).mount('#app')

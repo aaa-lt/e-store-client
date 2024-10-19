@@ -4,8 +4,6 @@ import Cookies from 'js-cookie'
 
 export const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
 
-console.log(baseUrl)
-
 const api = axios.create({
   baseURL: baseUrl,
   headers: {

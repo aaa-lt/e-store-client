@@ -9,7 +9,14 @@ export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     accessToken: null,
     refreshToken: null,
-    user: null,
+    user: {
+      email: '',
+      friendly_name: '',
+      id: 0,
+      is_admin: false,
+      user_type: 'regular',
+      username: ''
+    },
     isAuthenticated: false
   }),
 
@@ -17,12 +24,22 @@ export const useAuthStore = defineStore('auth', {
     async loadTokensFromCookies() {
       const accessToken = Cookies.get('access')
       const refreshToken = Cookies.get('refresh')
-      if (accessToken && refreshToken) {
-        this.accessToken = accessToken
-        this.refreshToken = refreshToken
-        this.isAuthenticated = true
-        const user = await api.get(`${baseUrl}/users/me`)
-        this.user = user.data.username
+
+      try {
+        if (refreshToken) {
+          if (accessToken) {
+            this.accessToken = accessToken
+          }
+          this.refreshToken = refreshToken
+          const user = await api.get(`${baseUrl}/users/me`)
+
+          if (user) {
+            this.isAuthenticated = true
+          }
+          this.user = user.data
+        }
+      } catch (error) {
+        console.error('Error loading tokens from cookies', error)
       }
     },
 
@@ -41,7 +58,7 @@ export const useAuthStore = defineStore('auth', {
       })
       const { accessToken, refreshToken } = response.data
       this.setTokens(accessToken, refreshToken)
-      this.user = username
+      this.user.username = username
       this.isAuthenticated = true
 
       router.push('/')
@@ -54,11 +71,46 @@ export const useAuthStore = defineStore('auth', {
       })
       const { accessToken, refreshToken } = response.data
       this.setTokens(accessToken, refreshToken)
-      this.user = username
+      this.user.username = username
       this.isAuthenticated = true
 
       router.push('/')
     },
+
+    async startOAuthLogin() {
+      try {
+        const { data } = await axios.post(`${baseUrl}/auth/request`)
+
+        window.location.href = data.url
+      } catch (error) {
+        console.error('Error initiating OAuth login', error)
+      }
+    },
+
+    async handleOAuthCallback(code: string) {
+      try {
+        const response = await axios.get(`${baseUrl}/auth/oauth`, {
+          params: { code }
+        })
+
+        const { accessToken, refreshToken } = response.data.tokens
+
+        this.setTokens(accessToken, refreshToken)
+        await this.loadTokensFromCookies()
+
+        console.log(accessToken)
+
+        if (!this.user) {
+          throw new Error('User not found')
+        }
+        console.log('OAuth callback successful')
+
+        return router.push('/')
+      } catch (error) {
+        console.error('Error during OAuth callback handling', error)
+      }
+    },
+
     async refreshTokens() {
       try {
         const refreshToken = Cookies.get('refresh')
@@ -83,8 +135,15 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.accessToken = null
       this.refreshToken = null
-      this.user = null
-      this.isAuthenticated = false
+      ;(this.user = {
+        email: '',
+        friendly_name: '',
+        id: 0,
+        is_admin: false,
+        user_type: 'regular',
+        username: ''
+      }),
+        (this.isAuthenticated = false)
 
       Cookies.remove('access')
       Cookies.remove('refresh')

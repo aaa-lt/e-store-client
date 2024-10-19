@@ -44,10 +44,14 @@ const fetchItems = async () => {
 
 onMounted(async () => {
   await fetchItems()
-})
 
-watch(filters, async () => {
-  await fetchItems()
+  watch(cart, async () => {
+    await fetchItems()
+  })
+
+  watch(filters, async () => {
+    await fetchItems()
+  })
 })
 
 watch(
@@ -60,10 +64,6 @@ watch(
   },
   { deep: true }
 )
-
-watch(cart, async () => {
-  await fetchItems()
-})
 
 provide('filters', filters)
 provide('pagination', {

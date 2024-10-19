@@ -10,7 +10,7 @@ import api, { baseUrl } from '@/services/axiosInstance'
 import DrawerModal from '../molecules/DrawerModal.vue'
 
 const authStore = useAuthStore()
-const username = computed(() => authStore.user)
+const username = computed(() => authStore.user?.username)
 const isCreatingOrder = ref(false)
 const orderId = ref(null)
 const modalOpen = ref(false)
