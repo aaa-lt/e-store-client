@@ -10,11 +10,14 @@ import router from './router'
 const pinia = createPinia()
 const app = createApp(App)
 
-app.use(pinia)
+async function initApp() {
+  app.use(pinia)
 
-const authStore = useAuthStore()
-await authStore.loadTokensFromCookies()
+  const authStore = useAuthStore()
+  await authStore.loadTokensFromCookies()
 
-app.use(router)
+  app.use(router)
+  app.use(autoAnimatePlugin).mount('#app')
+}
 
-app.use(autoAnimatePlugin).mount('#app')
+initApp()
