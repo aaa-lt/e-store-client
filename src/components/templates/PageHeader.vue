@@ -8,7 +8,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 
 const authStore = useAuthStore()
-const username = computed(() => authStore.user.friendly_name)
+const username = computed(() => authStore.user.friendly_name ?? authStore.user.username)
 
 const mobileMenuOpen = ref(false)
 

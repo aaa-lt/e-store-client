@@ -69,9 +69,9 @@ export const useAuthStore = defineStore('auth', {
         username,
         password
       })
-      const { accessToken, refreshToken } = response.data
+      const { accessToken, refreshToken, user } = response.data
       this.setTokens(accessToken, refreshToken)
-      this.user.username = username
+      this.user = user
       this.isAuthenticated = true
 
       router.push('/')
@@ -98,12 +98,9 @@ export const useAuthStore = defineStore('auth', {
         this.setTokens(accessToken, refreshToken)
         await this.loadTokensFromCookies()
 
-        console.log(accessToken)
-
         if (!this.user) {
           throw new Error('User not found')
         }
-        console.log('OAuth callback successful')
 
         return router.push('/')
       } catch (error) {

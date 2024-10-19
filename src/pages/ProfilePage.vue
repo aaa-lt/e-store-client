@@ -19,8 +19,6 @@ const updateProfile = async () => {
     console.log(err)
   }
 }
-
-console.log(authStore.user)
 </script>
 <template>
   <form @submit.prevent="updateProfile">

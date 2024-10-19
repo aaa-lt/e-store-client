@@ -27,7 +27,6 @@ onMounted(async () => {
 
 watch(filters, async () => {
   await fetchItems()
-  console.log(filters)
 })
 
 provide('filters', filters)
