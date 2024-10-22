@@ -15,7 +15,8 @@ export const useAuthStore = defineStore('auth', {
       id: 0,
       is_admin: false,
       user_type: 'regular',
-      username: ''
+      username: '',
+      profileImageUrl: ''
     },
     isAuthenticated: false
   }),
@@ -56,9 +57,9 @@ export const useAuthStore = defineStore('auth', {
         email,
         password
       })
-      const { accessToken, refreshToken } = response.data
+      const { accessToken, refreshToken, user } = response.data
       this.setTokens(accessToken, refreshToken)
-      this.user.username = username
+      this.user = user
       this.isAuthenticated = true
 
       router.push('/')
@@ -138,7 +139,8 @@ export const useAuthStore = defineStore('auth', {
         id: 0,
         is_admin: false,
         user_type: 'regular',
-        username: ''
+        username: '',
+        profileImageUrl: ''
       }),
         (this.isAuthenticated = false)
 

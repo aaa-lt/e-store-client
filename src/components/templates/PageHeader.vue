@@ -63,7 +63,14 @@ const emit = defineEmits(['open-drawer'])
             <MenuButton
               class="inline-flex w-full justify-center items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-90"
             >
+              <img
+                v-if="authStore.user.profileImageUrl"
+                :src="authStore.user.profileImageUrl"
+                class="size-8 rounded-full object-cover"
+                alt="Profile"
+              />
               <svg
+                v-else
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"

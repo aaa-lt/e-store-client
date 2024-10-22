@@ -7,16 +7,54 @@ import api, { baseUrl } from '@/services/axiosInstance'
 const authStore = useAuthStore()
 const friendlyName = ref(authStore.user.friendly_name ?? authStore.user.username)
 
+const selectedFile = ref<File | undefined>()
+const imagePreview = ref<string | undefined>()
+
+const onFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0] || undefined
+  if (file) {
+    selectedFile.value = file
+    imagePreview.value = URL.createObjectURL(file)
+  }
+}
+
 const updateProfile = async () => {
   try {
     const response = await api.patch(`${baseUrl}/users/profile`, {
       name: friendlyName.value
     })
+    if (selectedFile.value) {
+      await uploadImage()
+    }
     if (response.data.user.id === authStore.user.id) {
       authStore.user.friendly_name = response.data.user.friendly_name
     }
   } catch (err) {
     console.log(err)
+  }
+}
+
+const uploadImage = async () => {
+  if (!selectedFile.value) {
+    alert('Please select a file.')
+    return
+  }
+
+  try {
+    const formData = new FormData()
+    formData.append('profileImage', selectedFile.value)
+
+    const response = await api.post(`${baseUrl}/users/profile/upload-image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+
+    authStore.user = response.data.user
+  } catch (error) {
+    console.error('Error uploading image', error)
+    alert('Error uploading image')
   }
 }
 </script>
@@ -65,13 +103,27 @@ const updateProfile = async () => {
               >Photo</label
             >
             <div class="mt-2 flex items-center gap-x-3">
-              <UserCircleIcon class="h-12 w-12 text-gray-300" aria-hidden="true" />
-              <button
-                type="button"
+              <img
+                v-if="imagePreview"
+                :src="imagePreview"
+                alt="Profile Preview"
+                class="size-20 rounded-full object-cover"
+              />
+              <img
+                v-else-if="authStore.user.profileImageUrl"
+                :src="authStore.user.profileImageUrl"
+                class="size-20 rounded-full object-cover"
+                alt="Profile"
+              />
+
+              <UserCircleIcon v-else class="h-12 w-12 text-gray-300" aria-hidden="true" />
+
+              <label
                 class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
               >
-                Change
-              </button>
+                <input type="file" hidden @change="onFileChange" accept="image/*" />
+                <span>Change</span>
+              </label>
             </div>
           </div>
         </div>

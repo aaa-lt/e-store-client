@@ -12,4 +12,5 @@ export interface User {
   is_admin: boolean
   user_type: 'regular' | 'google'
   username: string
+  profileImageUrl: string | undefined
 }
