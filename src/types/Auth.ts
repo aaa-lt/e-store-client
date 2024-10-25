@@ -13,4 +13,5 @@ export interface User {
   user_type: 'regular' | 'google'
   username: string
   profileImageUrl: string | undefined
+  sasToken: string
 }

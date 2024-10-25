@@ -1,14 +1,24 @@
 <script setup lang="ts">
 import { UserCircleIcon } from '@heroicons/vue/24/solid'
 import { useAuthStore } from '@/stores/auth'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import api, { baseUrl } from '@/services/axiosInstance'
+import type { AxiosError } from 'axios'
+import axios from 'axios'
+import { getFullURI } from '@/utils/imgURI'
 
 const authStore = useAuthStore()
 const friendlyName = ref(authStore.user.friendly_name ?? authStore.user.username)
 
 const selectedFile = ref<File | undefined>()
 const imagePreview = ref<string | undefined>()
+const isButtonDisabled = ref(false)
+const responseError = ref<AxiosError | undefined>()
+const errorMessage = computed(() => {
+  return (responseError.value?.response?.data as any).message === 'Unexpected field'
+    ? 'Invalid file type. Only JPEG, JPG, and PNG files are allowed.'
+    : (responseError.value?.response?.data as any).message
+})
 
 const onFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -21,6 +31,7 @@ const onFileChange = (event: Event) => {
 
 const updateProfile = async () => {
   try {
+    isButtonDisabled.value = true
     const response = await api.patch(`${baseUrl}/users/profile`, {
       name: friendlyName.value
     })
@@ -32,6 +43,8 @@ const updateProfile = async () => {
     }
   } catch (err) {
     console.log(err)
+  } finally {
+    isButtonDisabled.value = false
   }
 }
 
@@ -52,9 +65,13 @@ const uploadImage = async () => {
     })
 
     authStore.user = response.data.user
-  } catch (error) {
-    console.error('Error uploading image', error)
-    alert('Error uploading image')
+    responseError.value = undefined
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      responseError.value = err
+    } else {
+      console.error('An unexpected error occurred:', err)
+    }
   }
 }
 </script>
@@ -64,9 +81,6 @@ const uploadImage = async () => {
       <div class="border-b border-gray-900/10 pb-12">
         <div class="border-b border-gray-200 py-6 space-y-4">
           <h2 class="text-4xl font-bold leading-7 text-gray-900">Profile</h2>
-          <p class="text-sm leading-6 text-gray-600">
-            This information will be displayed publicly so be careful what you share.
-          </p>
         </div>
 
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -111,7 +125,7 @@ const uploadImage = async () => {
               />
               <img
                 v-else-if="authStore.user.profileImageUrl"
-                :src="authStore.user.profileImageUrl"
+                :src="getFullURI(authStore.user.profileImageUrl)"
                 class="size-20 rounded-full object-cover"
                 alt="Profile"
               />
@@ -124,6 +138,9 @@ const uploadImage = async () => {
                 <input type="file" hidden @change="onFileChange" accept="image/*" />
                 <span>Change</span>
               </label>
+              <div v-if="responseError" class="text-sm font-medium text-red-500">
+                {{ errorMessage }}
+              </div>
             </div>
           </div>
         </div>
@@ -133,8 +150,9 @@ const uploadImage = async () => {
     <div class="mt-6 flex items-center justify-end gap-x-6">
       <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
       <button
+        :disabled="isButtonDisabled"
         type="submit"
-        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-slate-400 disabled:cursor-not-allowed"
       >
         Save
       </button>

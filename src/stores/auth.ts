@@ -16,7 +16,8 @@ export const useAuthStore = defineStore('auth', {
       is_admin: false,
       user_type: 'regular',
       username: '',
-      profileImageUrl: ''
+      profileImageUrl: '',
+      sasToken: ''
     },
     isAuthenticated: false
   }),
@@ -105,6 +106,11 @@ export const useAuthStore = defineStore('auth', {
 
         return router.push('/')
       } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.status === 409) {
+            throw error
+          }
+        }
         console.error('Error during OAuth callback handling', error)
       }
     },
@@ -140,7 +146,8 @@ export const useAuthStore = defineStore('auth', {
         is_admin: false,
         user_type: 'regular',
         username: '',
-        profileImageUrl: ''
+        profileImageUrl: '',
+        sasToken: ''
       }),
         (this.isAuthenticated = false)
 

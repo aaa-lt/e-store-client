@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, type PropType, ref } from 'vue'
-import { getImageByName } from '@/services/fetchService'
 import type { ImageSizes } from '@/types/Product'
+import { getImageUrlByQuality } from '@/utils/imgURI'
 
 const props = defineProps({
   imageUrl: {
@@ -20,19 +20,19 @@ const isLoaded = ref(false)
 onMounted(() => {
   const img = new Image()
   img.onload = () => (isLoaded.value = true)
-  img.src = getImageByName(props.imageUrl, props.imageSize)
+  img.src = getImageUrlByQuality(props.imageUrl, props.imageSize)
 })
 </script>
 <template>
   <img
     v-if="isLoaded"
-    :src="getImageByName(imageUrl, imageSize)"
+    :src="getImageUrlByQuality(imageUrl, imageSize)"
     :alt="imageAlt"
     class="h-full w-full object-cover object-center group-hover:opacity-75 aspect-square bg-slate-200"
   />
   <img
     v-else
-    :src="getImageByName(imageUrl, 'potato')"
+    :src="getImageUrlByQuality(imageUrl, 'potato')"
     :alt="imageAlt"
     class="h-full w-full object-cover object-center blur-md animate-pulse aspect-square bg-slate-200 group-hover:opacity-75"
   />

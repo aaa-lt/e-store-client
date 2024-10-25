@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { Order } from '@/types/Order'
-import { onMounted, reactive, onBeforeMount, computed, ref } from 'vue'
+import { onMounted, reactive, onBeforeMount, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import OrderStatus from '@/components/atoms/OrderStatus.vue'
 import { getOrderById } from '@/services/fetchService'
-import { getImageByName } from '@/services/fetchService'
 import ProductImage from '@/components/atoms/ProductImage.vue'
 
 const route = useRoute()
@@ -34,7 +33,6 @@ const totalPrice = computed(() =>
     0
   )
 )
-const isLoaded = ref(false)
 
 const fetchItems = async () => {
   try {
@@ -47,10 +45,6 @@ const fetchItems = async () => {
 
 onMounted(async () => {
   await fetchItems()
-
-  const img = new Image()
-  img.onload = () => (isLoaded.value = true)
-  img.src = getImageByName(order.Products[0].image_url, 'low')
 })
 
 onBeforeMount(() => {

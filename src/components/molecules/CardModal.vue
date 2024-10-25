@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import { getImageByName } from '@/services/fetchService'
 import ProductImage from '../atoms/ProductImage.vue'
 
-const props = defineProps({
+defineProps({
   open: Boolean,
   product: {
     type: Object,

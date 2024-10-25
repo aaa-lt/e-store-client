@@ -6,6 +6,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '../../stores/auth'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
+import { getFullURI } from '@/utils/imgURI'
 
 const authStore = useAuthStore()
 const username = computed(() => authStore.user.friendly_name ?? authStore.user.username)
@@ -65,7 +66,7 @@ const emit = defineEmits(['open-drawer'])
             >
               <img
                 v-if="authStore.user.profileImageUrl"
-                :src="authStore.user.profileImageUrl"
+                :src="getFullURI(authStore.user.profileImageUrl)"
                 class="size-8 rounded-full object-cover"
                 alt="Profile"
               />
