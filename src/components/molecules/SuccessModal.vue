@@ -5,11 +5,13 @@ import { CheckIcon } from '@heroicons/vue/24/outline'
 withDefaults(
   defineProps<{
     open: boolean
-    orderId: number | null
+    title: string
+    text: string
   }>(),
   {
     open: false,
-    orderId: null
+    title: '',
+    text: ''
   }
 )
 const emit = defineEmits(['close-modal'])
@@ -54,12 +56,12 @@ const emit = defineEmits(['close-modal'])
                     <CheckIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
                   </div>
                   <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900"
-                      >Order placed!</DialogTitle
-                    >
+                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">{{
+                      title
+                    }}</DialogTitle>
                     <div class="mt-2">
                       <p class="text-sm text-gray-500">
-                        Your order #{{ orderId }} has been successfully placed.
+                        {{ text }}
                       </p>
                     </div>
                   </div>

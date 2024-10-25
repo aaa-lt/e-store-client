@@ -7,7 +7,7 @@ import CartItem from '../structures/CartItem.vue'
 import type { Product } from '@/types/Product'
 import { useAuthStore } from '../../stores/auth'
 import api, { baseUrl } from '@/services/axiosInstance'
-import DrawerModal from '../molecules/DrawerModal.vue'
+import SuccessModal from '../molecules/SuccessModal.vue'
 
 const authStore = useAuthStore()
 const username = computed(() => authStore.user?.username)
@@ -178,5 +178,10 @@ const createOrder = async () => {
       </div>
     </Dialog>
   </TransitionRoot>
-  <DrawerModal @close-modal="closeModal" :open="modalOpen" :order-id="orderId" />
+  <SuccessModal
+    @close-modal="closeModal"
+    :open="modalOpen"
+    title="Order placed!"
+    :text="`Your order ${orderId} has been successfully placed.`"
+  />
 </template>

@@ -14,4 +14,8 @@ export interface User {
   username: string
   profileImageUrl: string | undefined
   sasToken: string
+  phone_number: string
+  age: number
+  delivery_address: string
+  newsletter_opt_in: boolean
 }
