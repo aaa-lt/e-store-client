@@ -72,8 +72,8 @@ const createOrder = async () => {
       </TransitionChild> -->
 
       <div class="fixed inset-0 overflow-hidden">
-        <div class="absolute inset-0 overflow-hidden">
-          <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+        <div class="absolute inset-0 overflow-hidden bg-black bg-opacity-25">
+          <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full">
             <TransitionChild
               as="template"
               enter="transform transition ease-in-out duration-500 sm:duration-700"

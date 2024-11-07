@@ -1,12 +1,12 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Dialog, DialogPanel } from '@headlessui/vue'
+import { Dialog, DialogPanel, Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '../../stores/auth'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
-import { getFullURI } from '@/utils/imgURI'
+import ProfileImage from '../atoms/ProfileImage.vue'
 
 const authStore = useAuthStore()
 const username = computed(() => authStore.user.friendly_name ?? authStore.user.username)
@@ -64,28 +64,7 @@ const emit = defineEmits(['open-drawer'])
             <MenuButton
               class="inline-flex w-full justify-center items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-90"
             >
-              <img
-                v-if="authStore.user.profileImageUrl"
-                :src="getFullURI(authStore.user.profileImageUrl)"
-                class="size-8 rounded-full object-cover"
-                alt="Profile"
-              />
-              <svg
-                v-else
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-4"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                />
-              </svg>
-
+              <ProfileImage />
               <span>{{ username }}</span>
               <ChevronDownIcon class="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
             </MenuButton>
@@ -162,6 +141,9 @@ const emit = defineEmits(['open-drawer'])
         >
       </div>
     </nav>
+
+    <!-- Mobile menu -->
+
     <Dialog class="lg:hidden" @close="mobileMenuOpen = false" :open="mobileMenuOpen">
       <div class="fixed inset-0 z-10" />
       <DialogPanel
@@ -169,10 +151,10 @@ const emit = defineEmits(['open-drawer'])
       >
         <div class="flex items-center justify-between">
           <a href="#" class="-m-1.5 p-1.5">
-            <span class="sr-only">Shop</span>
+            <span class="sr-only">Your Company</span>
             <img
               class="h-8 w-auto"
-              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
+              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
               alt=""
             />
           </a>
@@ -187,11 +169,70 @@ const emit = defineEmits(['open-drawer'])
         </div>
         <div class="mt-6 flow-root">
           <div class="-my-6 divide-y divide-gray-500/10">
+            <div class="space-y-2 py-6">
+              <Disclosure v-if="username" as="div" class="-mx-3" v-slot="{ open }">
+                <DisclosureButton
+                  class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                >
+                  <div class="flex gap-2 items-center">
+                    <ProfileImage />
+                    <span>{{ username }}</span>
+                  </div>
+
+                  <ChevronDownIcon
+                    :class="[open ? 'rotate-180' : '', 'h-5 w-5 flex-none']"
+                    aria-hidden="true"
+                  />
+                </DisclosureButton>
+                <DisclosurePanel class="mt-2 space-y-2">
+                  <RouterLink to="/profile">
+                    <DisclosureButton
+                      as="div"
+                      class="block rounded-lg py-2 pl-6 pr-3 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
+                      @click="mobileMenuOpen = false"
+                      >Edit profile</DisclosureButton
+                    >
+                  </RouterLink>
+
+                  <RouterLink to="/orders">
+                    <DisclosureButton
+                      as="div"
+                      class="block rounded-lg py-2 pl-6 pr-3 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
+                      @click="mobileMenuOpen = false"
+                      >My orders</DisclosureButton
+                    >
+                  </RouterLink>
+
+                  <RouterLink to="/logout">
+                    <DisclosureButton
+                      as="div"
+                      class="block rounded-lg py-2 pl-6 pr-3 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
+                      @click="mobileMenuOpen = false"
+                      >Log out</DisclosureButton
+                    >
+                  </RouterLink>
+                </DisclosurePanel>
+              </Disclosure>
+              <RouterLink
+                v-else
+                to="/login"
+                href="#"
+                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                @click="mobileMenuOpen = false"
+                >Log in</RouterLink
+              >
+            </div>
             <div class="py-6">
               <a
                 href="#"
-                class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >Log in</a
+                class="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                @click="
+                  () => {
+                    mobileMenuOpen = false
+                    emit('open-drawer')
+                  }
+                "
+                >Cart <span class="text-xs text-gray-700">(${{ totalPrice }})</span></a
               >
             </div>
           </div>

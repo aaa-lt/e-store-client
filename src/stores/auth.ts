@@ -17,7 +17,11 @@ export const useAuthStore = defineStore('auth', {
       user_type: 'regular',
       username: '',
       profileImageUrl: '',
-      sasToken: ''
+      sasToken: '',
+      phone_number: '',
+      age: 0,
+      delivery_address: '',
+      newsletter_opt_in: false
     },
     isAuthenticated: false
   }),
@@ -147,7 +151,11 @@ export const useAuthStore = defineStore('auth', {
         user_type: 'regular',
         username: '',
         profileImageUrl: '',
-        sasToken: ''
+        sasToken: '',
+        phone_number: '',
+        age: 0,
+        delivery_address: '',
+        newsletter_opt_in: false
       }),
         (this.isAuthenticated = false)
 
