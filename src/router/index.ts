@@ -61,10 +61,11 @@ const router = createRouter({
       beforeEnter: (to, from, next) => {
         const authStore = useAuthStore()
         const code = to.query.code
+        const state = to.query.state
 
-        if (code) {
+        if (code && state) {
           authStore
-            .handleOAuthCallback(code as string)
+            .handleOAuthCallback(code as string, state as string)
             .then(() => next('/'))
             .catch((err) => next({ path: '/login', query: { status: err.status } }))
         } else {

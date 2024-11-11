@@ -85,7 +85,7 @@ export const useAuthStore = defineStore('auth', {
 
     async startOAuthLogin() {
       try {
-        const { data } = await axios.post(`${baseUrl}/auth/request`)
+        const { data } = await axios.get(`${baseUrl}/auth/request`)
 
         window.location.href = data.url
       } catch (error) {
@@ -93,30 +93,28 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async handleOAuthCallback(code: string) {
-      try {
-        const response = await axios.get(`${baseUrl}/auth/oauth`, {
-          params: { code }
-        })
+    async handleOAuthCallback(code: string, state: string) {
+      const parsedState = JSON.parse(state)
 
-        const { accessToken, refreshToken } = response.data.tokens
-
-        this.setTokens(accessToken, refreshToken)
-        await this.loadTokensFromCookies()
-
-        if (!this.user) {
-          throw new Error('User not found')
-        }
-
-        return router.push('/')
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          if (error.status === 409) {
-            throw error
-          }
-        }
-        console.error('Error during OAuth callback handling', error)
+      if (!parsedState.provider) {
+        throw new Error('No provider found in state')
       }
+
+      const response = await axios.post(`${baseUrl}/auth/oauth`, {
+        code,
+        provider: parsedState.provider
+      })
+
+      const { accessToken, refreshToken } = response.data.tokens
+
+      this.setTokens(accessToken, refreshToken)
+      await this.loadTokensFromCookies()
+
+      if (!this.user) {
+        throw new Error('User not found')
+      }
+
+      return router.push('/')
     },
 
     async refreshTokens() {

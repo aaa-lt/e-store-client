@@ -28,7 +28,7 @@ const topComputed = (limitValues.length * 36 + 25) * -1 + 'px'
     v-if="paginationMeta.total_items > 1"
     class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 mt-4 sm:px-6"
   >
-    <div class="flex flex-1 justify-between sm:hidden">
+    <!-- <div class="flex flex-1 justify-between sm:hidden">
       <button
         :disabled="paginationMeta.current_page === 1"
         @click="paginationPreviousPage"
@@ -43,8 +43,8 @@ const topComputed = (limitValues.length * 36 + 25) * -1 + 'px'
       >
         Next
       </button>
-    </div>
-    <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+    </div> -->
+    <div class="flex flex-1 items-center justify-between flex-col sm:flex-row gap-4 sm:gap-0">
       <div>
         <p class="text-sm text-gray-700">
           Showing
@@ -73,12 +73,15 @@ const topComputed = (limitValues.length * 36 + 25) * -1 + 'px'
           results
         </p>
       </div>
-      <div class="flex gap-4" v-if="paginationMeta.total_items > 11">
-        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+      <div class="flex gap-4 w-full sm:w-auto" v-if="paginationMeta.total_items > 11">
+        <nav
+          class="isolate inline-flex -space-x-px rounded-md shadow-sm w-full sm:w-auto justify-between"
+          aria-label="Pagination"
+        >
           <a
             :disabled="paginationMeta.current_page === 1"
             @click="paginationPreviousPage"
-            class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer disabled:cursor-not-allowed"
+            class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer disabled:cursor-not-allowed sm:flex-none flex-1 justify-center"
           >
             <span class="sr-only">Previous</span>
             <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
@@ -86,13 +89,13 @@ const topComputed = (limitValues.length * 36 + 25) * -1 + 'px'
           <span
             href="#"
             aria-current="page"
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300"
+            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 sm:flex-none flex-1 justify-center"
             >{{ paginationMeta.current_page }}</span
           >
           <a
             :disabled="paginationMeta.current_page === paginationMeta.total_pages"
             @click="paginationNextPage"
-            class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer disabled:cursor-not-allowed"
+            class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer disabled:cursor-not-allowed sm:flex-none flex-1 justify-center"
           >
             <span class="sr-only">Next</span>
             <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />

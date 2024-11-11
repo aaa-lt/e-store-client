@@ -125,10 +125,11 @@ const login = async () => {
               </svg>
             </SocialLoginButton>
             <div v-if="$route.query.status" class="text-sm font-medium text-red-500">
-              <span
+              <span v-if="Number($route.query.status) === 409"
                 >User with this email is alredy registered. Please log in to link google
                 account</span
               >
+              <span v-if="Number($route.query.status) === 500">Unexpected error during auth</span>
             </div>
             <p class="text-sm font-light text-gray-500 py-0">
               Don't have an account?
