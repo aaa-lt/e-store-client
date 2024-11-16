@@ -83,11 +83,33 @@ export const useAuthStore = defineStore('auth', {
       router.push('/')
     },
 
-    async startOAuthLogin() {
+    async startOAuthLogin(source: 'google' | 'github') {
       try {
-        const { data } = await axios.get(`${baseUrl}/auth/request`)
+        switch (source) {
+          case 'google': {
+            const { data } = await axios.get(`${baseUrl}/auth/request`, {
+              params: {
+                provider: 'google'
+              }
+            })
 
-        window.location.href = data.url
+            window.location.assign(data.url)
+            break
+          }
+          case 'github': {
+            const { data } = await axios.get(`${baseUrl}/auth/request`, {
+              params: {
+                provider: 'github'
+              }
+            })
+
+            window.location.assign(data.url)
+            break
+          }
+
+          default:
+            console.error('Error initiating OAuth login')
+        }
       } catch (error) {
         console.error('Error initiating OAuth login', error)
       }
@@ -125,7 +147,6 @@ export const useAuthStore = defineStore('auth', {
         const response = await axios.post(`${baseUrl}/auth/refresh`, {
           refreshToken: `Bearer ${refreshToken}`
         })
-
         const { accessToken } = response.data
         this.accessToken = accessToken
         Cookies.set('access', accessToken)
