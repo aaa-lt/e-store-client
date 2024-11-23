@@ -10,7 +10,7 @@ const route = useRoute()
 const router = useRouter()
 
 const order = reactive<Order>({
-  id: 0,
+  id: '',
   user_id: 0,
   status: '',
   order_date: '',
@@ -36,7 +36,7 @@ const totalPrice = computed(() =>
 
 const fetchItems = async () => {
   try {
-    const item = await getOrderById(Number(route.params.id))
+    const item = await getOrderById(String(route.params.id))
     Object.assign(order, item)
   } catch (error) {
     console.log(error)
@@ -45,12 +45,6 @@ const fetchItems = async () => {
 
 onMounted(async () => {
   await fetchItems()
-})
-
-onBeforeMount(() => {
-  if (isNaN(Number(route.params.id))) {
-    router.push('/404')
-  }
 })
 </script>
 

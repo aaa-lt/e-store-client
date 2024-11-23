@@ -8,7 +8,7 @@ export interface AuthState {
 export interface User {
   email: string
   friendly_name: string
-  id: number
+  id: string
   is_admin: boolean
   user_type: 'regular' | 'google'
   username: string

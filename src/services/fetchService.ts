@@ -19,7 +19,7 @@ const getOrders = async (params: Filters): Promise<OrderResponse> => {
   return data
 }
 
-const getOrderById = async (id: number): Promise<Order> => {
+const getOrderById = async (id: string): Promise<Order> => {
   const { data } = await api.get<Order>(`${baseUrl}/orders/${id}`)
 
   return data

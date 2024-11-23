@@ -12,7 +12,7 @@ export const useAuthStore = defineStore('auth', {
     user: {
       email: '',
       friendly_name: '',
-      id: 0,
+      id: '',
       is_admin: false,
       user_type: 'regular',
       username: '',
@@ -165,7 +165,7 @@ export const useAuthStore = defineStore('auth', {
       ;(this.user = {
         email: '',
         friendly_name: '',
-        id: 0,
+        id: '',
         is_admin: false,
         user_type: 'regular',
         username: '',

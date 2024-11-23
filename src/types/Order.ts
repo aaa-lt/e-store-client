@@ -1,7 +1,7 @@
 import type { PaginationMeta } from './Search'
 
 export interface Order {
-  id: number
+  id: string
   user_id: number
   status: string
   order_date: string
