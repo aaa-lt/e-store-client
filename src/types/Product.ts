@@ -1,6 +1,6 @@
 import type { PaginationMeta } from './Search'
 
-export interface Product {
+interface Product {
   id: string
   name: string
   description: string
@@ -13,9 +13,13 @@ export interface Product {
   userQuantity: number
 }
 
-export interface ProductResponse {
+interface ProductResponse {
   meta: PaginationMeta
   items: Product[]
 }
 
-export type ImageSizes = 'full' | 'middle' | 'low' | 'potato'
+type ImageSizes = 'full' | 'middle' | 'low' | 'potato'
+
+type FetchStatus = 'loading' | 'success' | 'error'
+
+export type { Product, ProductResponse, ImageSizes, FetchStatus }

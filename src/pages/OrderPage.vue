@@ -1,34 +1,21 @@
 <script setup lang="ts">
 import type { Order } from '@/types/Order'
-import { onMounted, reactive, onBeforeMount, computed } from 'vue'
+import { onBeforeMount, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import OrderStatus from '@/components/atoms/OrderStatus.vue'
 import { getOrderById } from '@/services/fetchService'
 import ProductImage from '@/components/atoms/ProductImage.vue'
+import type { FetchStatus } from '@/types/Product'
+import axios from 'axios'
 
 const route = useRoute()
 const router = useRouter()
 
-const order = reactive<Order>({
-  id: '',
-  user_id: 0,
-  status: '',
-  order_date: '',
-  Products: [
-    {
-      id: 0,
-      name: '',
-      price: 0,
-      image_url: '',
-      OrderProduct: {
-        quantity: 0
-      }
-    }
-  ]
-})
+const order = ref<Order>()
+const status = ref<FetchStatus>('loading')
 
 const totalPrice = computed(() =>
-  order.Products?.reduce(
+  order.value?.Products?.reduce(
     (total, item) => total + (item.price || 0) * (item.OrderProduct?.quantity || 0),
     0
   )
@@ -36,28 +23,36 @@ const totalPrice = computed(() =>
 
 const fetchItems = async () => {
   try {
-    const item = await getOrderById(String(route.params.id))
-    Object.assign(order, item)
+    order.value = await getOrderById(String(route.params.id))
+    status.value = 'success'
   } catch (error) {
+    status.value = 'error'
+
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        return router.push({ name: 'NotFound' })
+      }
+    }
+
     console.log(error)
   }
 }
 
-onMounted(async () => {
+onBeforeMount(async () => {
   await fetchItems()
 })
 </script>
 
 <template>
   <section class="bg-white py-8 antialiased md:py-16">
-    <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
-      <h2 class="text-xl font-semibold text-gray-900 sm:text-2xl">Order #{{ order.id }}</h2>
+    <div v-if="order" class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+      <h2 class="text-xl font-semibold text-gray-900 sm:text-2xl">Order #{{ order?.id }}</h2>
 
       <div class="mt-6 sm:mt-8 lg:flex lg:gap-8">
         <div
           class="w-full divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200 lg:max-w-xl xl:max-w-2xl"
         >
-          <div v-for="product in order.Products" :key="product.id">
+          <div v-for="product in order?.Products" :key="product.id">
             <div class="space-y-4 p-6">
               <div class="flex items-center gap-6">
                 <div class="h-14 w-14 shrink-0">
@@ -112,7 +107,7 @@ onMounted(async () => {
             </div>
             <div class="flex items-center">
               <span class="mr-1">Status:</span>
-              <OrderStatus :status="order.status ? order.status : 'N/A'" />
+              <OrderStatus :status="order?.status ? order.status : 'N/A'" />
             </div>
 
             <RouterLink
@@ -125,6 +120,7 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+    <div v-else>Error while getting order</div>
   </section>
 
   <!-- <section class="bg-white py-8 antialiased md:py-16">

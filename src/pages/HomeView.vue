@@ -3,7 +3,7 @@
 import FiltersSection from '@/components/templates/FilteredSection.vue'
 import CardList from '@/components/structures/CardList.vue'
 import { inject, onMounted, provide, ref, watch, type Ref } from 'vue'
-import type { Product } from '../types/Product'
+import type { FetchStatus, Product } from '../types/Product'
 import { getProducts } from '@/services/fetchService'
 import { usePagination } from '@/services/usePagination'
 
@@ -15,6 +15,7 @@ const { cart, updateCart }: { cart: Ref<Product[]>; updateCart: (item: Product) 
 ) ?? { cart: ref<Product[]>([]), updateCart: () => {} }
 
 const products = ref<Product[]>([])
+const status = ref<FetchStatus>('loading')
 
 const fetchItems = async () => {
   try {
@@ -37,7 +38,9 @@ const fetchItems = async () => {
       isAdded: cart.value.some((cartItem) => cartItem.id === products.id),
       userQuantity: 1
     }))
+    status.value = 'success'
   } catch (error) {
+    status.value = 'error'
     console.log(error)
   }
 }
@@ -76,6 +79,6 @@ provide('pagination', {
 
 <template>
   <FiltersSection>
-    <CardList :products="products" @update-cart="updateCart" />
+    <CardList :products="products" :status="status" @update-cart="updateCart" />
   </FiltersSection>
 </template>

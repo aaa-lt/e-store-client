@@ -5,10 +5,13 @@ import { onMounted, ref, provide, watch } from 'vue'
 import Pagination from '@/components/structures/PaginationFooter.vue'
 import { getOrders } from '@/services/fetchService'
 import { usePagination } from '@/services/usePagination'
+import type { FetchStatus } from '@/types/Product'
+import OrderCardSkeleton from '@/components/molecules/OrderCardSkeleton.vue'
 
 const orders = ref<Order[]>([])
 const { paginationMeta, filters, paginationNextPage, paginationPreviousPage, paginationSetLimit } =
   usePagination()
+const status = ref<FetchStatus>('loading')
 
 const fetchItems = async () => {
   try {
@@ -16,7 +19,9 @@ const fetchItems = async () => {
 
     orders.value = items
     paginationMeta.value = meta
+    status.value = 'success'
   } catch (error) {
+    status.value = 'error'
     console.log(error)
   }
 }
@@ -86,11 +91,20 @@ provide('pagination', {
         </div>
 
         <div class="mt-6 flow-root sm:mt-8">
+          <div v-if="status === 'loading'" v-auto-animate class="divide-y divide-gray-200">
+            <OrderCardSkeleton v-for="n in 6" :key="n" />
+          </div>
           <div
-            v-if="orders.length === 0"
+            v-else-if="status === 'error'"
             class="h-full flex items-center justify-center text-2xl text-gray-500"
           >
-            No orders found
+            Error while getting products
+          </div>
+          <div
+            v-else-if="orders.length === 0"
+            class="h-full flex items-center justify-center text-2xl text-gray-500"
+          >
+            No products found
           </div>
           <div v-else v-auto-animate class="divide-y divide-gray-200">
             <OrderCard v-for="order in orders" :key="order.id" :order="order" />
