@@ -6,8 +6,7 @@ const authStore = useAuthStore()
 
 defineProps({
   resonseStatus: {
-    type: Number,
-    required: true
+    type: Number
   }
 })
 </script>
@@ -53,7 +52,7 @@ defineProps({
       />
     </svg>
   </SocialLoginButton>
-  <div v-if="$route.query.status" class="text-sm font-medium text-red-500">
+  <div v-if="resonseStatus" class="text-sm font-medium text-red-500">
     <span v-if="resonseStatus === 409">User with this email is alredy registered</span>
     <span v-else-if="resonseStatus === 500">Unexpected error during auth</span>
     <span v-else>Error during auth: {{ resonseStatus }}</span>

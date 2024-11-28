@@ -67,7 +67,12 @@ const router = createRouter({
           authStore
             .handleOAuthCallback(code as string, state as string)
             .then(() => next('/'))
-            .catch((err) => next({ path: '/login', query: { status: err.status } }))
+            .catch((err) => {
+              const authStore = useAuthStore()
+
+              authStore.responseCode = Number(err.status)
+              next({ path: '/login' })
+            })
         } else {
           next('/login')
         }

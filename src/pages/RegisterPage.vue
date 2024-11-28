@@ -162,7 +162,7 @@ const register = async () => {
             </button>
             <div class="border-t border-slate-200 mx-6"></div>
 
-            <SocialLoginGroup :resonse-status="Number($route.query.status)"></SocialLoginGroup>
+            <SocialLoginGroup :resonse-status="authStore.responseCode"></SocialLoginGroup>
             <p class="text-sm font-light text-gray-500">
               Already have an account?
               <RouterLink to="/login" class="font-medium text-indigo-600 hover:underline"

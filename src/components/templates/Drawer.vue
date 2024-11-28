@@ -12,7 +12,7 @@ import SuccessModal from '../molecules/SuccessModal.vue'
 const authStore = useAuthStore()
 const username = computed(() => authStore.user?.username)
 const isCreatingOrder = ref(false)
-const orderId = ref(null)
+const orderId = ref(undefined)
 const modalOpen = ref(false)
 const closeModal = () => (modalOpen.value = false)
 

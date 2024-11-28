@@ -1,8 +1,9 @@
-export interface AuthState {
-  accessToken: string | null
-  refreshToken: string | null
+export interface PiniaState {
+  accessToken: string | undefined
+  refreshToken: string | undefined
   user: User
   isAuthenticated: boolean
+  responseCode: number | undefined
 }
 
 export interface User {

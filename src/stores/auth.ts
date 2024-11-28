@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import router from '../router'
-import type { AuthState } from '@/types/Auth'
+import type { PiniaState } from '@/types/Auth'
 import Cookies from 'js-cookie'
 import api, { baseUrl } from '@/services/axiosInstance'
 
 export const useAuthStore = defineStore('auth', {
-  state: (): AuthState => ({
-    accessToken: null,
-    refreshToken: null,
+  state: (): PiniaState => ({
+    accessToken: undefined,
+    refreshToken: undefined,
     user: {
       email: '',
       friendly_name: '',
@@ -22,7 +22,8 @@ export const useAuthStore = defineStore('auth', {
       delivery_address: '',
       newsletter_opt_in: false
     },
-    isAuthenticated: false
+    isAuthenticated: false,
+    responseCode: undefined
   }),
 
   actions: {
@@ -36,6 +37,7 @@ export const useAuthStore = defineStore('auth', {
             this.accessToken = accessToken
           }
           this.refreshToken = refreshToken
+
           const user = await api.get(`${baseUrl}/users/me`)
 
           if (user) {
@@ -56,12 +58,14 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async register(username: string, email: string, password: string) {
-      const response = await axios.post(`${baseUrl}/auth/register`, {
+      const {
+        data: { accessToken, refreshToken, user }
+      } = await axios.post(`${baseUrl}/auth/register`, {
         username,
         email,
         password
       })
-      const { accessToken, refreshToken, user } = response.data
+
       this.setTokens(accessToken, refreshToken)
       this.user = user
       this.isAuthenticated = true
@@ -70,11 +74,13 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async login(username: string, password: string) {
-      const response = await axios.post(`${baseUrl}/auth/login`, {
+      const {
+        data: { accessToken, refreshToken, user }
+      } = await axios.post(`${baseUrl}/auth/login`, {
         username,
         password
       })
-      const { accessToken, refreshToken, user } = response.data
+
       this.setTokens(accessToken, refreshToken)
       this.user = user
       this.isAuthenticated = true
@@ -84,33 +90,14 @@ export const useAuthStore = defineStore('auth', {
 
     async startOAuthLogin(source: 'google' | 'github') {
       try {
-        switch (source) {
-          case 'google': {
-            const { data } = await axios.get(`${baseUrl}/auth/request`, {
-              params: {
-                provider: 'google'
-              }
-            })
-
-            window.location.assign(data.url)
-            break
-          }
-          case 'github': {
-            const { data } = await axios.get(`${baseUrl}/auth/request`, {
-              params: {
-                provider: 'github'
-              }
-            })
-
-            window.location.assign(data.url)
-            break
-          }
-
-          default:
-            console.error('Error initiating OAuth login')
-        }
+        const {
+          data: { url }
+        } = await axios.get(`${baseUrl}/auth/oauth/url`, {
+          params: { provider: source }
+        })
+        window.location.assign(url)
       } catch (error) {
-        console.error('Error initiating OAuth login', error)
+        console.error(`Error initiating OAuth login for ${source}`, error)
       }
     },
 
@@ -121,12 +108,14 @@ export const useAuthStore = defineStore('auth', {
         throw new Error('No provider found in state')
       }
 
-      const response = await axios.post(`${baseUrl}/auth/oauth`, {
+      const {
+        data: {
+          tokens: { accessToken, refreshToken }
+        }
+      } = await axios.post(`${baseUrl}/auth/oauth/callback`, {
         code,
         provider: parsedState.provider
       })
-
-      const { accessToken, refreshToken } = response.data.tokens
 
       this.setTokens(accessToken, refreshToken)
       await this.loadTokensFromCookies()
@@ -143,10 +132,11 @@ export const useAuthStore = defineStore('auth', {
         const refreshToken = Cookies.get('refresh')
         if (!refreshToken) throw new Error('No refresh token available')
 
-        const response = await axios.post(`${baseUrl}/auth/refresh`, {
+        const {
+          data: { accessToken }
+        } = await axios.post(`${baseUrl}/auth/refresh`, {
           refreshToken: `Bearer ${refreshToken}`
         })
-        const { accessToken } = response.data
         this.accessToken = accessToken
         Cookies.set('access', accessToken)
 
@@ -159,8 +149,8 @@ export const useAuthStore = defineStore('auth', {
     },
 
     logout() {
-      this.accessToken = null
-      this.refreshToken = null
+      this.accessToken = undefined
+      this.refreshToken = undefined
       ;(this.user = {
         email: '',
         friendly_name: '',
