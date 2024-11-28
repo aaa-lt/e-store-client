@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import type { Filters } from '@/types/Search'
-import { inject, reactive, ref, watch } from 'vue'
+import type { ProductFilters } from '@/types/Search'
+import { inject, reactive, watch } from 'vue'
 import { debounce } from '../../utils/debounce'
 
-const filters = inject('filters') as Filters
+const filters = inject('productFilters') as ProductFilters
 const inputs = reactive({
   minPrice: '',
   maxPrice: '',
-  creationDate: '',
+  fromDate: '',
+  toDate: '',
   categoryName: '',
   supplierName: ''
 })
@@ -17,7 +18,8 @@ watch(
   debounce(() => {
     filters.minPrice = inputs.minPrice ? parseInt(inputs.minPrice as unknown as string) : undefined
     filters.maxPrice = inputs.maxPrice ? parseInt(inputs.maxPrice as unknown as string) : undefined
-    filters.creationDate = inputs.creationDate ?? ''
+    filters.fromDate = inputs.fromDate ?? ''
+    filters.toDate = inputs.toDate ?? ''
     filters.categoryName = inputs.categoryName ?? ''
     filters.supplierName = inputs.supplierName ?? ''
   }, 300),
@@ -47,14 +49,23 @@ watch(
     </div>
   </div>
   <div class="border-b border-gray-200 py-6">
-    <h3 class="font-medium text-gray-900">Date</h3>
-    <div class="flex pt-4">
+    <h3 class="font-medium text-gray-900">Creation date</h3>
+    <div class="flex flex-row pt-4">
       <input
-        class="ring-1 ring-inset ring-gray-300 focus:bg-slate-50 px-3 py-2 rounded-md w-full outline-none text-sm"
+        class="ring-1 ring-inset ring-gray-300 focus:bg-slate-50 px-3 py-2 rounded-l-md outline-none text-sm appearance-none"
         type="date"
         name="creation_date"
         id="creation_date"
-        v-model="inputs.creationDate"
+        :max="inputs.toDate"
+        v-model="inputs.fromDate"
+      />
+      <input
+        class="ring-1 ring-inset ring-gray-300 focus:bg-slate-50 px-3 py-2 rounded-r-md outline-none text-sm appearance-none"
+        type="date"
+        name="creation_date"
+        id="creation_date"
+        :min="inputs.fromDate"
+        v-model="inputs.toDate"
       />
     </div>
   </div>

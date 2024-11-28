@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject } from 'vue'
-import type { Filters } from '@/types/Search'
+import type { ProductFilters } from '@/types/Search'
 import SearchInput from '../molecules/SearchInput.vue'
 import SortDropdown from '../molecules/SortDropdown.vue'
 
@@ -10,7 +10,7 @@ const handleMobileFiltersToggle = (value: boolean) => {
   emit('mobileFiltersToggle', value)
 }
 
-const filters = inject('filters') as Filters
+const filters = inject('productFilters') as ProductFilters
 
 const handleChangeSearchFilter = (value: string) => {
   filters.searchQuery = value

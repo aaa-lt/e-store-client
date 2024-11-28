@@ -1,9 +1,11 @@
 import type { ProductResponse } from '@/types/Product'
 import type { OrderResponse, Order } from '@/types/Order'
-import type { Filters } from '@/types/Search'
+import type { ProductFilters, PaginationFilters, OrdersFilters } from '@/types/Search'
 import api, { baseUrl } from '@/services/axiosInstance'
 
-const getProducts = async (params: Filters): Promise<ProductResponse> => {
+const getProducts = async (
+  params: ProductFilters & PaginationFilters
+): Promise<ProductResponse> => {
   const { data } = await api.get<ProductResponse>(`${baseUrl}/products`, {
     params
   })
@@ -11,7 +13,7 @@ const getProducts = async (params: Filters): Promise<ProductResponse> => {
   return data
 }
 
-const getOrders = async (params: Filters): Promise<OrderResponse> => {
+const getOrders = async (params: OrdersFilters & PaginationFilters): Promise<OrderResponse> => {
   const { data } = await api.get<OrderResponse>(`${baseUrl}/orders`, {
     params
   })

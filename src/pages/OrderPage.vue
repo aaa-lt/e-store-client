@@ -12,7 +12,7 @@ const route = useRoute()
 const router = useRouter()
 
 const order = ref<Order>()
-const status = ref<FetchStatus>('loading')
+const requestStatus = ref<FetchStatus>('loading')
 
 const totalPrice = computed(() =>
   order.value?.Products?.reduce(
@@ -24,9 +24,9 @@ const totalPrice = computed(() =>
 const fetchItems = async () => {
   try {
     order.value = await getOrderById(String(route.params.id))
-    status.value = 'success'
+    requestStatus.value = 'success'
   } catch (error) {
-    status.value = 'error'
+    requestStatus.value = 'error'
 
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {

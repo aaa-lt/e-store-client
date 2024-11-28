@@ -1,4 +1,4 @@
-import type { Filters, PaginationMeta } from '@/types/Search'
+import type { PaginationFilters, PaginationMeta } from '@/types/Search'
 import { reactive, ref } from 'vue'
 
 export function usePagination() {
@@ -10,20 +10,20 @@ export function usePagination() {
     remaining_items: 0
   })
 
-  const filters = reactive<Filters>({
+  const paginationFilters = reactive<PaginationFilters>({
     page: 1,
     limit: 10
   })
 
   const paginationNextPage = () => {
-    if (filters.page < paginationMeta.value.total_pages) {
-      filters.page++
+    if (paginationFilters.page < paginationMeta.value.total_pages) {
+      paginationFilters.page++
     }
   }
 
   const paginationPreviousPage = () => {
-    if (filters.page > 1) {
-      filters.page--
+    if (paginationFilters.page > 1) {
+      paginationFilters.page--
     }
   }
 
@@ -33,13 +33,13 @@ export function usePagination() {
     )
     const newTotalPages = Math.ceil(paginationMeta.value.total_items / limit)
 
-    filters.page = newPage > newTotalPages ? newTotalPages : newPage
-    filters.limit = limit
+    paginationFilters.page = newPage > newTotalPages ? newTotalPages : newPage
+    paginationFilters.limit = limit
   }
 
   return {
     paginationMeta,
-    filters,
+    paginationFilters,
     paginationNextPage,
     paginationPreviousPage,
     paginationSetLimit

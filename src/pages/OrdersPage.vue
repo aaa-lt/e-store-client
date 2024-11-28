@@ -1,27 +1,56 @@
 <script setup lang="ts">
 import OrderCard from '@/components/molecules/OrderCard.vue'
 import type { Order } from '@/types/Order'
-import { onMounted, ref, provide, watch } from 'vue'
+import { onMounted, ref, provide, watch, reactive } from 'vue'
 import Pagination from '@/components/structures/PaginationFooter.vue'
 import { getOrders } from '@/services/fetchService'
 import { usePagination } from '@/services/usePagination'
 import type { FetchStatus } from '@/types/Product'
 import OrderCardSkeleton from '@/components/molecules/OrderCardSkeleton.vue'
+import type { OrdersFilters } from '@/types/Search'
 
 const orders = ref<Order[]>([])
-const { paginationMeta, filters, paginationNextPage, paginationPreviousPage, paginationSetLimit } =
-  usePagination()
-const status = ref<FetchStatus>('loading')
+const {
+  paginationMeta,
+  paginationFilters,
+  paginationNextPage,
+  paginationPreviousPage,
+  paginationSetLimit
+} = usePagination()
+const ordersFilters = reactive<OrdersFilters>({})
+const requestStatus = ref<FetchStatus>('loading')
+
+const statusOptions = ref([
+  { text: 'All orders' },
+  { text: 'Pending', value: 'Pending' },
+  { text: 'Shipped', value: 'Shipped' },
+  { text: 'Delivered', value: 'Delivered' },
+  { text: 'Cancelled', value: 'Cancelled' }
+])
+
+const periodOptions = ref([
+  { text: 'all the time' },
+  { text: 'this week', value: '1w' },
+  { text: 'this month', value: '1m' },
+  { text: 'the last 3 months', value: '3m' },
+  { text: 'the last 6 months', value: '6m' },
+  { text: 'this year', value: '1y' }
+])
 
 const fetchItems = async () => {
   try {
-    const { items, meta } = await getOrders({ page: filters.page, limit: filters.limit })
+    const { items, meta } = await getOrders({
+      status: ordersFilters.status,
+      period: ordersFilters.period,
+      page: paginationFilters.page,
+      limit: paginationFilters.limit
+    })
 
     orders.value = items
     paginationMeta.value = meta
-    status.value = 'success'
+    requestStatus.value = 'success'
   } catch (error) {
-    status.value = 'error'
+    requestStatus.value = 'error'
     console.log(error)
   }
 }
@@ -30,11 +59,13 @@ onMounted(async () => {
   await fetchItems()
 })
 
-watch(filters, async () => {
+watch([paginationFilters, ordersFilters], async () => {
   await fetchItems()
 })
 
-provide('filters', filters)
+watch(ordersFilters, () => console.log(ordersFilters))
+
+provide('filters', paginationFilters)
 provide('pagination', {
   paginationMeta,
   paginationNextPage,
@@ -51,7 +82,6 @@ provide('pagination', {
           <h2 class="text-4xl font-bold tracking-tight text-gray-900">My orders</h2>
 
           <div
-            v-if="orders.length !== 0"
             class="mt-6 gap-4 space-y-4 sm:mt-0 sm:flex sm:items-center sm:justify-end sm:space-y-0"
           >
             <div>
@@ -61,12 +91,11 @@ provide('pagination', {
               <select
                 id="order-type"
                 class="block w-full min-w-[8rem] rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500"
+                v-model="ordersFilters.status"
               >
-                <option selected>All orders</option>
-                <option value="pre-order">Pending</option>
-                <option value="transit">Shipped</option>
-                <option value="confirmed">Delivered</option>
-                <option value="cancelled">Cancelled</option>
+                <option v-for="option in statusOptions" :value="option.value" :key="option.value">
+                  {{ option.text }}
+                </option>
               </select>
             </div>
 
@@ -79,23 +108,22 @@ provide('pagination', {
               <select
                 id="duration"
                 class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500"
+                v-model="ordersFilters.period"
               >
-                <option selected>this week</option>
-                <option value="this month">this month</option>
-                <option value="last 3 months">the last 3 months</option>
-                <option value="lats 6 months">the last 6 months</option>
-                <option value="this year">this year</option>
+                <option v-for="option in periodOptions" :value="option.value" :key="option.value">
+                  {{ option.text }}
+                </option>
               </select>
             </div>
           </div>
         </div>
 
         <div class="mt-6 flow-root sm:mt-8">
-          <div v-if="status === 'loading'" v-auto-animate class="divide-y divide-gray-200">
+          <div v-if="requestStatus === 'loading'" v-auto-animate class="divide-y divide-gray-200">
             <OrderCardSkeleton v-for="n in 6" :key="n" />
           </div>
           <div
-            v-else-if="status === 'error'"
+            v-else-if="requestStatus === 'error'"
             class="h-full flex items-center justify-center text-2xl text-gray-500"
           >
             Error while getting products
