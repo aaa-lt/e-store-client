@@ -5,7 +5,6 @@ import { computed, ref } from 'vue'
 import api, { baseUrl } from '@/services/axiosInstance'
 import type { AxiosError } from 'axios'
 import axios from 'axios'
-import { getFullURI } from '@/utils/imgURI'
 import SuccessModal from '@/components/molecules/SuccessModal.vue'
 
 const authStore = useAuthStore()
@@ -208,7 +207,7 @@ const uploadImage = async () => {
               />
               <img
                 v-else-if="authStore.user.profileImageUrl"
-                :src="getFullURI(authStore.user.profileImageUrl)"
+                :src="authStore.user.profileImageUrl"
                 class="size-20 rounded-full object-cover"
                 alt="Profile"
               />

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { getFullURI } from '@/utils/imgURI'
 
 const authStore = useAuthStore()
 </script>
@@ -8,7 +7,7 @@ const authStore = useAuthStore()
 <template>
   <img
     v-if="authStore.user.profileImageUrl"
-    :src="getFullURI(authStore.user.profileImageUrl)"
+    :src="authStore.user.profileImageUrl"
     class="size-8 rounded-full object-cover"
     alt="Profile"
   />
